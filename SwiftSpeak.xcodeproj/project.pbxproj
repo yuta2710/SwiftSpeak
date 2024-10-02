@@ -16,6 +16,8 @@
 		CF3ED9B52CAD37CA0087D136 /* SwiftSpeakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9B42CAD37CA0087D136 /* SwiftSpeakTests.swift */; };
 		CF3ED9BF2CAD37CA0087D136 /* SwiftSpeakUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9BE2CAD37CA0087D136 /* SwiftSpeakUITests.swift */; };
 		CF3ED9C12CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9C02CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift */; };
+		CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */; };
+		CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9CF2CAD38050087D136 /* MeetingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,9 @@
 		CF3ED9BA2CAD37CA0087D136 /* SwiftSpeakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSpeakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3ED9BE2CAD37CA0087D136 /* SwiftSpeakUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpeakUITests.swift; sourceTree = "<group>"; };
 		CF3ED9C02CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpeakUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
+		CF3ED9CF2CAD38050087D136 /* MeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingView.swift; sourceTree = "<group>"; };
+		CF3ED9D12CAD38D20087D136 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,12 +103,15 @@
 		CF3ED99D2CAD37C90087D136 /* SwiftSpeak */ = {
 			isa = PBXGroup;
 			children = (
+				CF3ED9D12CAD38D20087D136 /* Info.plist */,
 				CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */,
 				CF3ED9A02CAD37C90087D136 /* ContentView.swift */,
 				CF3ED9A22CAD37CA0087D136 /* Assets.xcassets */,
 				CF3ED9A72CAD37CA0087D136 /* Persistence.swift */,
 				CF3ED9A92CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld */,
 				CF3ED9A42CAD37CA0087D136 /* Preview Content */,
+				CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */,
+				CF3ED9CF2CAD38050087D136 /* MeetingView.swift */,
 			);
 			path = SwiftSpeak;
 			sourceTree = "<group>";
@@ -263,7 +271,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */,
 				CF3ED9AB2CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld in Sources */,
+				CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */,
 				CF3ED9A82CAD37CA0087D136 /* Persistence.swift in Sources */,
 				CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */,
 				CF3ED99F2CAD37C90087D136 /* SwiftSpeakApp.swift in Sources */,
@@ -432,6 +442,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftSpeak/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftSpeak/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Audio is recorded to transcribe the meeting. Audio recordings are discarded after transcription.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "You can view a text transcription of your meeting in the app";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -460,6 +474,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftSpeak/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftSpeak/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Audio is recorded to transcribe the meeting. Audio recordings are discarded after transcription.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "You can view a text transcription of your meeting in the app";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
