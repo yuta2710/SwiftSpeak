@@ -18,6 +18,8 @@
 		CF3ED9C12CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9C02CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift */; };
 		CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */; };
 		CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9CF2CAD38050087D136 /* MeetingView.swift */; };
+		CF3ED9D82CAD83B40087D136 /* UserSelectSpeedTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9D72CAD83B40087D136 /* UserSelectSpeedTypeView.swift */; };
+		CFCBC5CB2CADB49300833DB2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCBC5CA2CADB49300833DB2 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		CF3ED9CF2CAD38050087D136 /* MeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingView.swift; sourceTree = "<group>"; };
 		CF3ED9D12CAD38D20087D136 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CF3ED9D72CAD83B40087D136 /* UserSelectSpeedTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelectSpeedTypeView.swift; sourceTree = "<group>"; };
+		CFCBC5CA2CADB49300833DB2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,11 @@
 		CF3ED99D2CAD37C90087D136 /* SwiftSpeak */ = {
 			isa = PBXGroup;
 			children = (
+				CFCBC5C92CADB48500833DB2 /* Constants */,
+				CF3ED9D52CAD82A90087D136 /* Helpers */,
+				CF3ED9D42CAD82A10087D136 /* ViewModels */,
+				CF3ED9D32CAD829C0087D136 /* Components */,
+				CF3ED9D22CAD82970087D136 /* Views */,
 				CF3ED9D12CAD38D20087D136 /* Info.plist */,
 				CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */,
 				CF3ED9A02CAD37C90087D136 /* ContentView.swift */,
@@ -110,8 +119,6 @@
 				CF3ED9A72CAD37CA0087D136 /* Persistence.swift */,
 				CF3ED9A92CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld */,
 				CF3ED9A42CAD37CA0087D136 /* Preview Content */,
-				CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */,
-				CF3ED9CF2CAD38050087D136 /* MeetingView.swift */,
 			);
 			path = SwiftSpeak;
 			sourceTree = "<group>";
@@ -139,6 +146,45 @@
 				CF3ED9C02CAD37CA0087D136 /* SwiftSpeakUITestsLaunchTests.swift */,
 			);
 			path = SwiftSpeakUITests;
+			sourceTree = "<group>";
+		};
+		CF3ED9D22CAD82970087D136 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF3ED9CF2CAD38050087D136 /* MeetingView.swift */,
+				CF3ED9D72CAD83B40087D136 /* UserSelectSpeedTypeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CF3ED9D32CAD829C0087D136 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		CF3ED9D42CAD82A10087D136 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CF3ED9D52CAD82A90087D136 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		CFCBC5C92CADB48500833DB2 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				CFCBC5CA2CADB49300833DB2 /* Constants.swift */,
+			);
+			path = Constants;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,10 +319,12 @@
 			files = (
 				CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */,
 				CF3ED9AB2CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld in Sources */,
+				CF3ED9D82CAD83B40087D136 /* UserSelectSpeedTypeView.swift in Sources */,
 				CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */,
 				CF3ED9A82CAD37CA0087D136 /* Persistence.swift in Sources */,
 				CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */,
 				CF3ED99F2CAD37C90087D136 /* SwiftSpeakApp.swift in Sources */,
+				CFCBC5CB2CADB49300833DB2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,9 +485,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftSpeak/Preview Content\"";
+				DEVELOPMENT_TEAM = 53AZXG7V4Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftSpeak/Info.plist;
@@ -456,8 +506,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -469,9 +520,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftSpeak/Preview Content\"";
+				DEVELOPMENT_TEAM = 53AZXG7V4Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftSpeak/Info.plist;
@@ -488,8 +541,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
