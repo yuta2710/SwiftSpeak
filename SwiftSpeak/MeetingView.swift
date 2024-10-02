@@ -15,6 +15,7 @@ struct MeetingView: View {
             Text(speechRecognizer.transcript)
                 .padding()
                 .foregroundColor(.green)
+                .animation(.easeInOut)
             
             if !speechRecognizer.isRecording && speechRecognizer.canAnalyze {
                 Text("Speech Speed: \(speechRecognizer.speed.rawValue)")
@@ -65,7 +66,6 @@ struct MeetingView: View {
     }
 }
 
-// Previews
 struct MeetingView_Previews: PreviewProvider {
     static var previews: some View {
         MeetingView()

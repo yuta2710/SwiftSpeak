@@ -107,17 +107,20 @@ class SpeechRecognizer: ObservableObject {
                 self.wordCount = 0
                 self.lastTranscriptUpdate = Date()
                 
-                self.task = recognizer.recognitionTask(with: request) { result, error in
-                    let receivedFinalResult = result?.isFinal ?? false
-                    let receivedError = error != nil
-                    
-                    if receivedFinalResult || receivedError {
-                        audioEngine.stop()
-                        audioEngine.inputNode.removeTap(onBus: 0)
-                    }
+                self.task = recognizer.recognitionTask(with: request) { [weak self] result, error in
+                    guard let self = self else { return }
                     
                     if let result = result {
-                        self.updateTranscript(result.bestTranscription)
+                        DispatchQueue.main.async {
+                            self.updateTranscript(result.bestTranscription)
+                        }
+                    }
+                    
+                    if error != nil || result?.isFinal == true {
+                        audioEngine.stop()
+                        audioEngine.inputNode.removeTap(onBus: 0)
+                        self.isRecording = false
+                        self.canAnalyze = true
                     }
                 }
                 
@@ -170,19 +173,16 @@ class SpeechRecognizer: ObservableObject {
             self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
         }
     }
-    
     /// Update transcript to get whole text in one session
     private func updateTranscript(_ transcription: SFTranscription) {
-        DispatchQueue.main.async {
-            self.transcript = transcription.formattedString
-            let newWordCount = transcription.segments.count
-            
-            if newWordCount > self.wordCount {
-                self.wordCount = newWordCount
-                self.lastTranscriptUpdate = Date()
-            } else {
-                self.checkForUnclearSpeech()
-            }
+        self.transcript = transcription.formattedString
+        let newWordCount = transcription.segments.count
+        
+        if newWordCount > self.wordCount {
+            self.wordCount = newWordCount
+            self.lastTranscriptUpdate = Date()
+        } else {
+            self.checkForUnclearSpeech()
         }
     }
     
@@ -190,9 +190,7 @@ class SpeechRecognizer: ObservableObject {
     private func checkForUnclearSpeech() {
         if let lastUpdate = lastTranscriptUpdate,
            Date().timeIntervalSince(lastUpdate) >= unclearSpeechThreshold {
-            DispatchQueue.main.async {
-                self.showUnclearSpeechAlert = true
-            }
+            self.showUnclearSpeechAlert = true
         }
     }
     
