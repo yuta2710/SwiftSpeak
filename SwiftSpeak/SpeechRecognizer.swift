@@ -48,9 +48,10 @@ class SpeechRecognizer: ObservableObject {
         }
     }
     
+
     @Published var transcript: String = ""
     @Published var speed: SpeechSpeed = .Normal
-    @Published var wordsPerMinute: Double = 0.0
+    @Published var wordsPerMinute: Int = 0
     @Published var showUnclearSpeechAlert: Bool = false
 
     private var audioEngine: AVAudioEngine?
@@ -60,6 +61,8 @@ class SpeechRecognizer: ObservableObject {
     
     private var lastClearSpeechTime: Date?
     private let unclearSpeechThreshold: TimeInterval = 5.0 // 5 seconds
+    private var startTime: Date?
+    private var wordCount: Int = 0
     
     init() {
         recognizer = SFSpeechRecognizer()
@@ -99,6 +102,8 @@ class SpeechRecognizer: ObservableObject {
      Creates a `SFSpeechRecognitionTask` that transcribes speech to text until you call `stopTranscribing()`.
      The resulting transcription is continuously written to the published `transcript` property.
      */
+    
+    /// Begins transcribing audio and analyzing speech speed
     func transcribe() {
         DispatchQueue(label: "Speech Recognizer Queue", qos: .background).async { [weak self] in
             guard let self = self, let recognizer = self.recognizer, recognizer.isAvailable else {
@@ -111,6 +116,8 @@ class SpeechRecognizer: ObservableObject {
                 self.audioEngine = audioEngine
                 self.request = request
                 self.lastClearSpeechTime = Date()
+                self.startTime = Date()
+                self.wordCount = 0
                 
                 self.task = recognizer.recognitionTask(with: request) { result, error in
                     let receivedFinalResult = result?.isFinal ?? false
@@ -135,38 +142,44 @@ class SpeechRecognizer: ObservableObject {
     
     /// Analyzes the speed of speech based on the transcription
     private func analyzeSpeed(transcription: SFTranscription) {
-        let words = transcription.segments
-        guard let firstWord = words.first, let lastWord = words.last else {
-            return
-        }
+        guard let startTime = self.startTime else { return }
 
-        // Calculate words per minute
-        let totalTimeInMinutes = (lastWord.timestamp - firstWord.timestamp) / 60.0
-        let wordsPerMinute = Double(words.count) / totalTimeInMinutes
+        let currentWordCount = transcription.segments.count
+        let elapsedTimeInMinutes = Date().timeIntervalSince(startTime) / 60.0
 
-        DispatchQueue.main.async {
-            self.wordsPerMinute = wordsPerMinute
-            self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
+        // Only update if we have new words
+        if currentWordCount > self.wordCount {
+            self.wordCount = currentWordCount
             
-            // Check for unclear speech
-            if self.speed == .Unclear {
-                self.handleUnclearSpeech()
-            } else {
-                self.lastClearSpeechTime = Date()
+            // Calculate words per minute
+            let wordsPerMinute = Int(Double(self.wordCount) / elapsedTimeInMinutes)
+
+            DispatchQueue.main.async {
+                self.wordsPerMinute = wordsPerMinute
+                self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
+                
+                // Check for unclear speech
+                if self.speed == .Unclear {
+                    self.handleUnclearSpeech()
+                } else {
+                    self.lastClearSpeechTime = Date()
+                }
             }
         }
     }
     
     
     /// Categorizes speech speed based on words per minute
-    private func categorizeSpeechSpeed(wordsPerMinute: Double) -> SpeechSpeed {
+    private func categorizeSpeechSpeed(wordsPerMinute: Int) -> SpeechSpeed {
         switch wordsPerMinute {
-        case ...110:
+        case 1...109:
             return .Slow
         case 110...150:
             return .Normal
-        case 150...:
+        case 151...250:
             return .Fast
+        case 251...:
+            return .Unclear
         default:
             return .Unclear
         }
@@ -231,9 +244,13 @@ class SpeechRecognizer: ObservableObject {
         return (audioEngine, request)
     }
     
-    /// Stop transcribing audio.
+    /// Stops transcribing audio
     func stopTranscribing() {
         reset()
+        startTime = nil
+        wordCount = 0
+        wordsPerMinute = 0
+        speed = .Normal
     }
     
     private func speak(_ message: String) {

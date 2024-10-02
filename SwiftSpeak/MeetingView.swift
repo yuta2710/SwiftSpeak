@@ -21,7 +21,7 @@ struct MeetingView: View {
                 .padding()
                 .foregroundColor(.blue)
             
-            Text("Words per minute: \(String(format: "%.2f", speechRecognizer.wordsPerMinute))")
+            Text("Words per minute: \(speechRecognizer.wordsPerMinute)")
                 .padding()
                 .foregroundColor(.red)
                 .bold()
