@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MeetingView: View {
     @StateObject var speechRecognizer = SpeechRecognizer()
-    @State private var isRecording = false
     
     var body: some View {
         VStack {
@@ -17,30 +16,43 @@ struct MeetingView: View {
                 .padding()
                 .foregroundColor(.green)
             
-            Text("Speech Speed: \(speechRecognizer.speed.rawValue)")
-                .padding()
-                .foregroundColor(.blue)
-            
-            Text("Words per minute: \(speechRecognizer.wordsPerMinute)")
-                .padding()
-                .foregroundColor(.red)
-                .bold()
+            if !speechRecognizer.isRecording && speechRecognizer.canAnalyze {
+                Text("Speech Speed: \(speechRecognizer.speed.rawValue)")
+                    .padding()
+                    .foregroundColor(.blue)
+                
+                Text("Words per minute: \(speechRecognizer.wordsPerMinute)")
+                    .padding()
+                    .foregroundColor(.red)
+                    .bold()
+            }
             
             Button(action: {
-                if !isRecording {
-                    speechRecognizer.transcribe()
-                } else {
+                if speechRecognizer.isRecording {
                     speechRecognizer.stopTranscribing()
+                } else {
+                    speechRecognizer.transcribe()
                 }
-                
-                isRecording.toggle()
             }) {
-                Text(isRecording ? "Stop" : "Record")
+                Text(speechRecognizer.isRecording ? "Stop" : "Record")
                     .font(.title)
                     .foregroundColor(.white)
                     .padding()
-                    .background(isRecording ? Color.red : Color.blue)
+                    .background(speechRecognizer.isRecording ? Color.red : Color.blue)
                     .cornerRadius(10)
+            }
+            
+            if !speechRecognizer.isRecording && speechRecognizer.canAnalyze {
+                Button(action: {
+                    speechRecognizer.analyzeSpeedAndWPM()
+                }) {
+                    Text("Analyze")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.green)
+                        .cornerRadius(10)
+                }
             }
         }
         .alert(isPresented: $speechRecognizer.showUnclearSpeechAlert) {
@@ -53,6 +65,9 @@ struct MeetingView: View {
     }
 }
 
-#Preview {
-    MeetingView()
+// Previews
+struct MeetingView_Previews: PreviewProvider {
+    static var previews: some View {
+        MeetingView()
+    }
 }
