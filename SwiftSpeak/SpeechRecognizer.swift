@@ -48,11 +48,13 @@ class SpeechRecognizer: ObservableObject {
     @Published var transcript: String = ""
     @Published var speed: String = ""
     @Published var wordsPerSecond: Double = 0.0
+    @Published var wordsPerMinute: Double = 0.0
     
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
     private let recognizer: SFSpeechRecognizer?
+    private var startTime: DispatchTime?
     
     init() {
         recognizer = SFSpeechRecognizer()
@@ -93,6 +95,8 @@ class SpeechRecognizer: ObservableObject {
      The resulting transcription is continuously written to the published `transcript` property.
      */
     func transcribe() {
+        startTime = DispatchTime.now()
+        
         DispatchQueue(label: "Speech Recognizer Queue", qos: .background).async { [weak self] in
             guard let self = self, let recognizer = self.recognizer, recognizer.isAvailable else {
                 self?.speakError(RecognizerError.recognizerIsUnavailable)
@@ -114,8 +118,10 @@ class SpeechRecognizer: ObservableObject {
                     }
                     
                     if let result = result {
-                        self.analyzeDetailsOfSpeed(transcription: result.bestTranscription)
-                        self.speak(result.bestTranscription.formattedString)
+                        DispatchQueue.main.async {
+                            self.speak(result.bestTranscription.formattedString)
+                            self.analyzeDetailsOfSpeed(text: self.transcript)
+                        }
                     }
                 }
             } catch {
@@ -125,33 +131,69 @@ class SpeechRecognizer: ObservableObject {
         }
     }
     
-    private func analyzeDetailsOfSpeed(transcription: SFTranscription) {
-        let words = transcription.segments
-        guard let firstWord = words.first, let lastWord = words.last else {
-            return
+    private func analyzeDetailsOfSpeed(text: String) {
+        //        let words = transcription.segments
+        var lengthOfText = Array(text).count
+        
+        print("Length of text \(lengthOfText)")
+        
+        guard let startTime = startTime else { return }
+        
+        // Get the current time to calculate the duration
+        let endTime = DispatchTime.now()
+        let elapsedTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000
+        
+        // Split the transcript into words and count them
+        let words = text.split(separator: " ").count
+        
+        // Calculate words per minute
+        let wordsPerMinute = (Double(words) / elapsedTime) * 60
+        self.wordsPerMinute = wordsPerMinute
+        
+        let speedCategory: String = ""
+        
+        
+        // Determine the speed type based on WPM
+        if wordsPerMinute < 45 {
+            self.speed = SpeedType.Slow.value
         }
         
-        // Calculate the total duration of the speech
-        let totalTime = lastWord.timestamp - firstWord.timestamp
-        let wordsPerSecond = Double(words.count) / totalTime
-        
-        let speedCategory: String
-        
-        if wordsPerSecond > 5.0 {
-            speedCategory = SpeedType.Fast.value
-//            print("Word per second of fast = ", wordsPerSecond)
-        } else if wordsPerSecond > 2 {
-            speedCategory = SpeedType.Normal.value
-//            print("Word per second of normal = ", wordsPerSecond)
-        } else {
-            speedCategory = SpeedType.Slow.value
-//            print("Word per second of slow = ", wordsPerSecond)
+        if wordsPerMinute > 50 && wordsPerMinute < 80  {
+            self.speed = SpeedType.Normal.value
         }
         
-        DispatchQueue.main.async {
-            self.speed = speedCategory
-//            self.wordsPerSecond = wordsPerSecond
+        if wordsPerMinute > 100 {
+            self.speed = SpeedType.Fast.value
         }
+        
+        print(self.wordsPerMinute)
+        
+        // Log the result
+        print("WPM: \(wordsPerMinute), Speed: \(self.speed)")
+        //        guard let firstWord = words.first, let lastWord = words.last else {
+        //            return
+        //        }
+        //
+        //        // Calculate the total duration of the speech
+        //        let totalTimeInMinutes = (lastWord.timestamp - firstWord.timestamp) / 60.0
+        //
+        //        // Calculate words per minute
+        //        let wordsPerMinute = Double(words.count) / totalTimeInMinutes
+        //
+        //        print("Words per minute = ", wordsPerMinute)
+        //
+        //        let speedCategory: String
+        //        if wordsPerMinute < 16000.0 && wordsPerMinute > 12000.0 {
+        //            speedCategory = "Fast"
+        //        } else if wordsPerMinute < 900.0 {
+        //            speedCategory = "Slow"
+        //        } else {
+        //            speedCategory = "Normal"
+        //        }
+        
+//        DispatchQueue.main.async {
+//            self.speed =
+//        }
     }
     
     private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
