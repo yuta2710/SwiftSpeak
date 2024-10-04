@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */; };
+		3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */; };
+		3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */; };
 		CF3ED99F2CAD37C90087D136 /* SwiftSpeakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */; };
 		CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9A02CAD37C90087D136 /* ContentView.swift */; };
 		CF3ED9A32CAD37CA0087D136 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF3ED9A22CAD37CA0087D136 /* Assets.xcassets */; };
@@ -40,6 +43,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
+		3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF3ED99B2CAD37C90087D136 /* SwiftSpeak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSpeak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpeakApp.swift; sourceTree = "<group>"; };
 		CF3ED9A02CAD37C90087D136 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -115,6 +121,7 @@
 				CF3ED9D12CAD38D20087D136 /* Info.plist */,
 				CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */,
 				CF3ED9A02CAD37C90087D136 /* ContentView.swift */,
+				3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */,
 				CF3ED9A22CAD37CA0087D136 /* Assets.xcassets */,
 				CF3ED9A72CAD37CA0087D136 /* Persistence.swift */,
 				CF3ED9A92CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld */,
@@ -153,6 +160,7 @@
 			children = (
 				CF3ED9CF2CAD38050087D136 /* MeetingView.swift */,
 				CF3ED9D72CAD83B40087D136 /* UserSelectSpeedTypeView.swift */,
+				3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -175,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */,
+				3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -317,9 +326,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */,
 				CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */,
 				CF3ED9AB2CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld in Sources */,
 				CF3ED9D82CAD83B40087D136 /* UserSelectSpeedTypeView.swift in Sources */,
+				3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */,
+				3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */,
 				CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */,
 				CF3ED9A82CAD37CA0087D136 /* Persistence.swift in Sources */,
 				CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */,

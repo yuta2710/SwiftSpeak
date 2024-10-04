@@ -6,16 +6,28 @@
 //
 
 import SwiftUI
+import Firebase
 
 @main
 struct SwiftSpeakApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let persistenceController = PersistenceController.shared
+    @StateObject private var authManager = AuthenticationManager()
+    
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-//            MeetingView()
+            if authManager.isAuthenticated {
+                ContentView()
+                    .environmentObject(authManager)
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            } else {
+                AuthenticationView()
+                    .environmentObject(authManager)
+            }
         }
     }
 }
