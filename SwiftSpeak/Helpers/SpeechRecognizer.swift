@@ -9,6 +9,7 @@ import AVFoundation
 import Foundation
 import Speech
 import SwiftUI
+import FirebaseStorage
 
 enum SpeechSpeed: String {
     case Slow = "Slow"
@@ -41,7 +42,7 @@ class SpeechRecognizer: ObservableObject {
     @Published var showUnclearSpeechAlert: Bool = false
     @Published var isRecording: Bool = false
     @Published var canAnalyze: Bool = false
-
+    
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
@@ -100,7 +101,7 @@ class SpeechRecognizer: ObservableObject {
             }
             
             do {
-                let (audioEngine, request) = try Self.prepareEngine()
+                let (audioEngine, request) = try self.prepareEngine()
                 self.audioEngine = audioEngine
                 self.request = request
                 self.startTime = Date()
@@ -130,33 +131,33 @@ class SpeechRecognizer: ObservableObject {
         }
     }
     
-//    /// Analyzes the speed of speech based on the transcription
-//    private func analyzeSpeed(transcription: SFTranscription) {
-//        guard let startTime = self.startTime else { return }
-//
-//        let currentWordCount = transcription.segments.count
-//        let elapsedTimeInMinutes = Date().timeIntervalSince(startTime) / 60.0
-//
-//        // Only update if we have new words
-//        if currentWordCount > self.wordCount {
-//            self.wordCount = currentWordCount
-//
-//            // Calculate words per minute
-//            let wordsPerMinute = Int(Double(self.wordCount) / elapsedTimeInMinutes)
-//
-//            DispatchQueue.main.async {
-//                self.wordsPerMinute = wordsPerMinute
-//                self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
-//
-//                // Check for unclear speech
-//                if self.speed == .Unclear {
-//                    self.handleUnclearSpeech()
-//                } else {
-//                    self.lastClearSpeechTime = Date()
-//                }
-//            }
-//        }
-//    }
+    //    /// Analyzes the speed of speech based on the transcription
+    //    private func analyzeSpeed(transcription: SFTranscription) {
+    //        guard let startTime = self.startTime else { return }
+    //
+    //        let currentWordCount = transcription.segments.count
+    //        let elapsedTimeInMinutes = Date().timeIntervalSince(startTime) / 60.0
+    //
+    //        // Only update if we have new words
+    //        if currentWordCount > self.wordCount {
+    //            self.wordCount = currentWordCount
+    //
+    //            // Calculate words per minute
+    //            let wordsPerMinute = Int(Double(self.wordCount) / elapsedTimeInMinutes)
+    //
+    //            DispatchQueue.main.async {
+    //                self.wordsPerMinute = wordsPerMinute
+    //                self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
+    //
+    //                // Check for unclear speech
+    //                if self.speed == .Unclear {
+    //                    self.handleUnclearSpeech()
+    //                } else {
+    //                    self.lastClearSpeechTime = Date()
+    //                }
+    //            }
+    //        }
+    //    }
     
     /// Function to analyze the text WPM
     func analyzeSpeedAndWPM() {
@@ -210,63 +211,104 @@ class SpeechRecognizer: ObservableObject {
         }
     }
     
-//    /// Handles detection of unclear speech
-//    private func handleUnclearSpeech() {
-//        if let lastClearTime = lastClearSpeechTime,
-//           Date().timeIntervalSince(lastClearTime) >= unclearSpeechThreshold {
-//            showUnclearSpeechAlert = true
-//        }
-//    }
+    //    /// Handles detection of unclear speech
+    //    private func handleUnclearSpeech() {
+    //        if let lastClearTime = lastClearSpeechTime,
+    //           Date().timeIntervalSince(lastClearTime) >= unclearSpeechThreshold {
+    //            showUnclearSpeechAlert = true
+    //        }
+    //    }
     
-//    private func analyzeDetailsOfSpeed(transcription: SFTranscription) {
-//        let words = transcription.segments
-//        guard let firstWord = words.first, let lastWord = words.last else {
-//            return
-//        }
-//
-//        // Calculate the total duration of the speech
-//        let totalTime = lastWord.timestamp - firstWord.timestamp
-//        let wordsPerSecond = Double(words.count) / totalTime
-//
-//        let speedCategory: String
-//
-//        if wordsPerSecond > 5.0 {
-//            speedCategory = SpeedType.Fast.value
-////            print("Word per second of fast = ", wordsPerSecond)
-//        } else if wordsPerSecond > 2 {
-//            speedCategory = SpeedType.Normal.value
-////            print("Word per second of normal = ", wordsPerSecond)
-//        } else {
-//            speedCategory = SpeedType.Slow.value
-////            print("Word per second of slow = ", wordsPerSecond)
-//        }
-//
-//        DispatchQueue.main.async {
-//            self.speed = speedCategory
-////            self.wordsPerSecond = wordsPerSecond
-//        }
-//    }
+    //    private func analyzeDetailsOfSpeed(transcription: SFTranscription) {
+    //        let words = transcription.segments
+    //        guard let firstWord = words.first, let lastWord = words.last else {
+    //            return
+    //        }
+    //
+    //        // Calculate the total duration of the speech
+    //        let totalTime = lastWord.timestamp - firstWord.timestamp
+    //        let wordsPerSecond = Double(words.count) / totalTime
+    //
+    //        let speedCategory: String
+    //
+    //        if wordsPerSecond > 5.0 {
+    //            speedCategory = SpeedType.Fast.value
+    ////            print("Word per second of fast = ", wordsPerSecond)
+    //        } else if wordsPerSecond > 2 {
+    //            speedCategory = SpeedType.Normal.value
+    ////            print("Word per second of normal = ", wordsPerSecond)
+    //        } else {
+    //            speedCategory = SpeedType.Slow.value
+    ////            print("Word per second of slow = ", wordsPerSecond)
+    //        }
+    //
+    //        DispatchQueue.main.async {
+    //            self.speed = speedCategory
+    ////            self.wordsPerSecond = wordsPerSecond
+    //        }
+    //    }
     
-    private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
+    private var arrayBufferData = Data()
+    
+    
+    private func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
         let audioEngine = AVAudioEngine()
         
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         
         let audioSession = AVAudioSession.sharedInstance()
+        
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        let inputNode = audioEngine.inputNode
         
+        let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+        
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            if let channelData = buffer.floatChannelData {
+                let channelDataValue = Array(UnsafeBufferPointer(start: channelData[0], count: Int(buffer.frameLength)))
+                let audioData = NSData(bytes: channelDataValue, length: Int(buffer.frameLength) * MemoryLayout<Float>.size)
+                self.arrayBufferData.append(audioData as Data)
+            }
             request.append(buffer)
         }
+        
+        
         audioEngine.prepare()
         try audioEngine.start()
         
+        print("Audio Buffer Data = ")
+        print(self.arrayBufferData)
+        
         return (audioEngine, request)
     }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    
+    func uploadAudioFileToFirebase(audioFileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
+            let storageRef = Storage.storage().reference().child("audio/\(UUID().uuidString).caf")
+            
+            storageRef.putFile(from: audioFileURL, metadata: nil) { metadata, error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    storageRef.downloadURL { url, error in
+                        if let error = error {
+                            completion(.failure(error))
+                        } else if let downloadURL = url {
+                            completion(.success(downloadURL))
+                        }
+                    }
+                }
+            }
+        }
+    
     
     /// Stops transcribing audio
     func stopTranscribing() {
@@ -323,7 +365,7 @@ extension AVAudioSession {
 //        case notAuthorizedToRecognize
 //        case notPermittedToRecord
 //        case recognizerIsUnavailable
-//        
+//
 //        var message: String {
 //            switch self {
 //            case .nilRecognizer: return "Can't initialize speech recognizer"
@@ -333,14 +375,14 @@ extension AVAudioSession {
 //            }
 //        }
 //    }
-//    
+//
 //    @MainActor var transcript: String = ""
-//    
+//
 //    private var audioEngine: AVAudioEngine?
 //    private var request: SFSpeechAudioBufferRecognitionRequest?
 //    private var task: SFSpeechRecognitionTask?
 //    private let recognizer: SFSpeechRecognizer?
-//    
+//
 //    /**
 //     Initializes a new speech recognizer. If this is the first time you've used the class, it
 //     requests access to the speech recognizer and the microphone.
@@ -351,7 +393,7 @@ extension AVAudioSession {
 //            transcribe(RecognizerError.nilRecognizer)
 //            return
 //        }
-//        
+//
 //        Task {
 //            do {
 //                guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
@@ -365,28 +407,28 @@ extension AVAudioSession {
 //            }
 //        }
 //    }
-//    
+//
 //    @MainActor func startTranscribing() {
 //        Task {
 //            await transcribe()
 //        }
 //    }
-//    
+//
 //    @MainActor func resetTranscript() {
 //        Task {
 //            await reset()
 //        }
 //    }
-//    
+//
 //    @MainActor func stopTranscribing() {
 //        Task {
 //            await reset()
 //        }
 //    }
-//    
+//
 //    /**
 //     Begin transcribing audio.
-//     
+//
 //     Creates a `SFSpeechRecognitionTask` that transcribes speech to text until you call `stopTranscribing()`.
 //     The resulting transcription is continuously written to the published `transcript` property.
 //     */
@@ -395,7 +437,7 @@ extension AVAudioSession {
 //            self.transcribe(RecognizerError.recognizerIsUnavailable)
 //            return
 //        }
-//        
+//
 //        do {
 //            let (audioEngine, request) = try Self.prepareEngine()
 //            self.audioEngine = audioEngine
@@ -408,7 +450,7 @@ extension AVAudioSession {
 //            self.transcribe(error)
 //        }
 //    }
-//    
+//
 //    /// Reset the speech recognizer.
 //    private func reset() {
 //        task?.cancel()
@@ -417,43 +459,43 @@ extension AVAudioSession {
 //        request = nil
 //        task = nil
 //    }
-//    
+//
 //    private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
 //        let audioEngine = AVAudioEngine()
-//        
+//
 //        let request = SFSpeechAudioBufferRecognitionRequest()
 //        request.shouldReportPartialResults = true
-//        
+//
 //        let audioSession = AVAudioSession.sharedInstance()
 //        try audioSession.setCategory(.playAndRecord, mode: .measurement, options: .duckOthers)
 //        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 //        let inputNode = audioEngine.inputNode
-//        
+//
 //        let recordingFormat = inputNode.outputFormat(forBus: 0)
 //        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
 //            request.append(buffer)
 //        }
 //        audioEngine.prepare()
 //        try audioEngine.start()
-//        
+//
 //        return (audioEngine, request)
 //    }
-//    
+//
 //    nonisolated private func recognitionHandler(audioEngine: AVAudioEngine, result: SFSpeechRecognitionResult?, error: Error?) {
 //        let receivedFinalResult = result?.isFinal ?? false
 //        let receivedError = error != nil
-//        
+//
 //        if receivedFinalResult || receivedError {
 //            audioEngine.stop()
 //            audioEngine.inputNode.removeTap(onBus: 0)
 //        }
-//        
+//
 //        if let result {
 //            transcribe(result.bestTranscription.formattedString)
 //        }
 //    }
-//    
-//    
+//
+//
 //    nonisolated private func transcribe(_ message: String) {
 //        Task { @MainActor in
 //            transcript = message

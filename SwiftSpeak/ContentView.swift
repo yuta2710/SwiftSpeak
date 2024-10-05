@@ -19,7 +19,7 @@ struct ContentView: View {
         NavigationView {
             VStack (spacing: 0.0) {
                 TabView(selection: $currentTab) {
-                    MeetingView()
+                    AudioRecorderView()
                         .tabItem {
                             Image(systemName: Tab.home.rawValue)
                             Text("Home")
