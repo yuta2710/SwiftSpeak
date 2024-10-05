@@ -14,6 +14,7 @@ class AuthenticationManager: ObservableObject {
     @Published var user: User?
     @Published var isAuthenticated = false
     @Published var errorMessage: String?
+    @Published var isSignInEnabled = true
     
     private var handle: AuthStateDidChangeListenerHandle?
     
@@ -30,11 +31,18 @@ class AuthenticationManager: ObservableObject {
             DispatchQueue.main.async {
                 self?.user = user
                 self?.isAuthenticated = user != nil
+                self?.isSignInEnabled = user == nil
             }
         }
     }
     
     func signUp(email: String, password: String, name: String, completion: @escaping (Bool) -> Void) {
+        guard isSignInEnabled else {
+            errorMessage = "Please log out before creating a new account."
+            completion(false)
+            return
+        }
+        
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
             if let error = error {
                 self?.errorMessage = error.localizedDescription
@@ -60,6 +68,7 @@ class AuthenticationManager: ObservableObject {
                     completion(false)
                 } else {
                     self?.isAuthenticated = true
+                    self?.isSignInEnabled = false
                     completion(true)
                 }
             }
@@ -67,18 +76,30 @@ class AuthenticationManager: ObservableObject {
     }
     
     func signIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
+        guard isSignInEnabled else {
+            errorMessage = "Please log out before signing in to another account."
+            completion(false)
+            return
+        }
+        
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
             if let error = error {
                 self?.errorMessage = error.localizedDescription
                 completion(false)
             } else {
                 self?.isAuthenticated = true
+                self?.isSignInEnabled = false
                 completion(true)
             }
         }
     }
     
     func signInWithFacebook() {
+        guard isSignInEnabled else {
+            errorMessage = "Please log out before signing in with Facebook."
+            return
+        }
+        
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["public_profile", "email"], from: nil) { [weak self] (result, error) in
             if let error = error {
@@ -98,6 +119,7 @@ class AuthenticationManager: ObservableObject {
                     self?.errorMessage = "Firebase auth failed: \(error.localizedDescription)"
                 } else {
                     self?.isAuthenticated = true
+                    self?.isSignInEnabled = false
                 }
             }
         }
@@ -107,6 +129,7 @@ class AuthenticationManager: ObservableObject {
         do {
             try Auth.auth().signOut()
             self.isAuthenticated = false
+            self.isSignInEnabled = true
         } catch let error {
             self.errorMessage = "Failed to sign out: \(error.localizedDescription)"
         }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F176FC02CB139D700A81226 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3F176FBF2CB139D700A81226 /* GoogleService-Info.plist */; };
 		3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */; };
 		3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */; };
 		3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F176FBF2CB139D700A81226 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 		CF3ED99D2CAD37C90087D136 /* SwiftSpeak */ = {
 			isa = PBXGroup;
 			children = (
+				3F176FBF2CB139D700A81226 /* GoogleService-Info.plist */,
 				CFCBC5C92CADB48500833DB2 /* Constants */,
 				CF3ED9D52CAD82A90087D136 /* Helpers */,
 				CF3ED9D42CAD82A10087D136 /* ViewModels */,
@@ -302,6 +305,7 @@
 			files = (
 				CF3ED9A62CAD37CA0087D136 /* Preview Assets.xcassets in Resources */,
 				CF3ED9A32CAD37CA0087D136 /* Assets.xcassets in Resources */,
+				3F176FC02CB139D700A81226 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
