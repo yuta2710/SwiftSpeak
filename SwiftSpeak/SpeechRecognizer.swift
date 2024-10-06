@@ -11,85 +11,93 @@ import Speech
 import SwiftUI
 
 enum SpeechSpeed: String {
-    case Slow = "Slow"
-    case Normal = "Normal"
-    case Fast = "Fast"
-    case VeryFast = "Very Fast"
-    case Unclear = "Unclear"
+	case Slow = "Slow"
+	case Normal = "Normal"
+	case Fast = "Fast"
+	case VeryFast = "Very Fast"
+	case Unclear = "Unclear"
 }
 
+class SpeechRecognizer: NSObject, ObservableObject {
+	enum RecognizerError: Error {
+		case nilRecognizer
+		case notAuthorizedToRecognize
+		case notPermittedToRecord
+		case recognizerIsUnavailable
+		case transcriptionFailed(String)
+		
+		var message: String {
+			switch self {
+			case .nilRecognizer: return "Can't initialize speech recognizer"
+			case .notAuthorizedToRecognize: return "Not authorized to recognize speech"
+			case .notPermittedToRecord: return "Not permitted to record audio"
+			case .recognizerIsUnavailable: return "Recognizer is unavailable"
+			case .transcriptionFailed(let details): return "Transcription failed: \(details)"
+			}
+		}
+	}
+	
+	@Published var transcript: String = ""
+	@Published var speed: SpeechSpeed = .Normal
+	@Published var wordsPerMinute: Int = 0
+	@Published var isRecording: Bool = false
+	@Published var isProcessing: Bool = false
+	@Published var canAnalyze: Bool = false
+	@Published var errorMessage: String? = nil
+	@Published var showUnclearSpeechAlert: Bool = false
+	@Published var isPlaybackAvailable: Bool = false
+	@Published var isPlaying: Bool = false
 
-/// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
-class SpeechRecognizer: ObservableObject {
-    enum RecognizerError: Error {
-        case nilRecognizer
-        case notAuthorizedToRecognize
-        case notPermittedToRecord
-        case recognizerIsUnavailable
-        case transcriptionFailed(String)
-        
-        var message: String {
-            switch self {
-            case .nilRecognizer: return "Can't initialize speech recognizer"
-            case .notAuthorizedToRecognize: return "Not authorized to recognize speech"
-            case .notPermittedToRecord: return "Not permitted to record audio"
-            case .recognizerIsUnavailable: return "Recognizer is unavailable"
-            case .transcriptionFailed(let details): return "Transcription failed: \(details)"
-            }
-        }
-    }
-    
-    @Published var transcript: String = ""
-    @Published var speed: SpeechSpeed = .Normal
-    @Published var wordsPerMinute: Int = 0
-    @Published var isRecording: Bool = false
-    @Published var isProcessing: Bool = false
-    @Published var canAnalyze: Bool = false
-    @Published var errorMessage: String? = nil
-    @Published var showUnclearSpeechAlert: Bool = false
+	private var audioEngine: AVAudioEngine?
+	private var request: SFSpeechAudioBufferRecognitionRequest?
+	private var task: SFSpeechRecognitionTask?
+	private let recognizer: SFSpeechRecognizer?
+	
+	private var startTime: Date?
+	private var wordCount: Int = 0
+	private var isFinalizing: Bool = false
+	private var lastTranscriptUpdate: Date?
+	private let unclearSpeechThreshold: TimeInterval = 3.0 // 3 seconds
 
-    private var audioEngine: AVAudioEngine?
-    private var request: SFSpeechAudioBufferRecognitionRequest?
-    private var task: SFSpeechRecognitionTask?
-    private let recognizer: SFSpeechRecognizer?
-    
-    private var startTime: Date?
-    private var wordCount: Int = 0
-    private var isFinalizing: Bool = false
-    private var lastTranscriptUpdate: Date?
-    private let unclearSpeechThreshold: TimeInterval = 3.0 // 3 seconds
-    
-    init() {
-        recognizer = SFSpeechRecognizer()
-        
-        Task(priority: .background) {
-            do {
-                guard recognizer != nil else {
-                    throw RecognizerError.nilRecognizer
-                }
-                guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
-                    throw RecognizerError.notAuthorizedToRecognize
-                }
-                guard await AVAudioSession.sharedInstance().hasPermissionToRecord() else {
-                    throw RecognizerError.notPermittedToRecord
-                }
-            } catch {
-                speakError(error)
-            }
-        }
-    }
+	private var audioRecorder: AVAudioRecorder?
+	private var audioPlayer: AVAudioPlayer?
+	private var audioFileURL: URL?
+	
+	override init() {
+		recognizer = SFSpeechRecognizer()
+		super.init()
+		
+		Task(priority: .background) {
+			do {
+				guard recognizer != nil else {
+					throw RecognizerError.nilRecognizer
+				}
+				guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
+					throw RecognizerError.notAuthorizedToRecognize
+				}
+				guard await AVAudioSession.sharedInstance().hasPermissionToRecord() else {
+					throw RecognizerError.notPermittedToRecord
+				}
+			} catch {
+				speakError(error)
+			}
+		}
+	}
     
     deinit {
         reset()
     }
     
-    func reset() {
-        task?.cancel()
-        audioEngine?.stop()
-        audioEngine = nil
-        request = nil
-        task = nil
-    }
+	func reset() {
+		task?.cancel()
+		audioEngine?.stop()
+		audioEngine = nil
+		request = nil
+		task = nil
+		audioRecorder?.stop()
+		audioPlayer?.stop()
+		isPlaying = false
+	}
     
     /**
      Begin transcribing audio.
@@ -114,6 +122,18 @@ class SpeechRecognizer: ObservableObject {
                 self.wordCount = 0
                 self.isFinalizing = false
                 self.lastTranscriptUpdate = Date()
+                
+                // Set up audio recording
+                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                self.audioFileURL = documentsPath.appendingPathComponent("speechRecording.m4a")
+                let settings = [
+                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                    AVSampleRateKey: 44100,
+                    AVNumberOfChannelsKey: 2,
+                    AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+                ]
+                self.audioRecorder = try AVAudioRecorder(url: self.audioFileURL!, settings: settings)
+                self.audioRecorder?.record()
                 
                 self.task = recognizer.recognitionTask(with: request) { [weak self] result, error in
                     guard let self = self else { return }
@@ -141,6 +161,7 @@ class SpeechRecognizer: ObservableObject {
                     self.canAnalyze = false
                     self.errorMessage = nil
                     self.showUnclearSpeechAlert = false
+                    self.isPlaybackAvailable = false
                 }
             } catch {
                 self.reset()
@@ -149,33 +170,7 @@ class SpeechRecognizer: ObservableObject {
         }
     }
     
-    //    /// Analyzes the speed of speech based on the transcription
-    //    private func analyzeSpeed(transcription: SFTranscription) {
-    //        guard let startTime = self.startTime else { return }
-    //
-    //        let currentWordCount = transcription.segments.count
-    //        let elapsedTimeInMinutes = Date().timeIntervalSince(startTime) / 60.0
-    //
-    //        // Only update if we have new words
-    //        if currentWordCount > self.wordCount {
-    //            self.wordCount = currentWordCount
-    //
-    //            // Calculate words per minute
-    //            let wordsPerMinute = Int(Double(self.wordCount) / elapsedTimeInMinutes)
-    //
-    //            DispatchQueue.main.async {
-    //                self.wordsPerMinute = wordsPerMinute
-    //                self.speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
-    //
-    //                // Check for unclear speech
-    //                if self.speed == .Unclear {
-    //                    self.handleUnclearSpeech()
-    //                } else {
-    //                    self.lastClearSpeechTime = Date()
-    //                }
-    //            }
-    //        }
-    //    }
+
     
     /// Function to analyze the text WPM
     func analyzeSpeedAndWPM() {
@@ -230,44 +225,7 @@ class SpeechRecognizer: ObservableObject {
             return .Unclear
         }
     }
-    
-    //    /// Handles detection of unclear speech
-    //    private func handleUnclearSpeech() {
-    //        if let lastClearTime = lastClearSpeechTime,
-    //           Date().timeIntervalSince(lastClearTime) >= unclearSpeechThreshold {
-    //            showUnclearSpeechAlert = true
-    //        }
-    //    }
-    
-    //    private func analyzeDetailsOfSpeed(transcription: SFTranscription) {
-    //        let words = transcription.segments
-    //        guard let firstWord = words.first, let lastWord = words.last else {
-    //            return
-    //        }
-    //
-    //        // Calculate the total duration of the speech
-    //        let totalTime = lastWord.timestamp - firstWord.timestamp
-    //        let wordsPerSecond = Double(words.count) / totalTime
-    //
-    //        let speedCategory: String
-    //
-    //        if wordsPerSecond > 5.0 {
-    //            speedCategory = SpeedType.Fast.value
-    ////            print("Word per second of fast = ", wordsPerSecond)
-    //        } else if wordsPerSecond > 2 {
-    //            speedCategory = SpeedType.Normal.value
-    ////            print("Word per second of normal = ", wordsPerSecond)
-    //        } else {
-    //            speedCategory = SpeedType.Slow.value
-    ////            print("Word per second of slow = ", wordsPerSecond)
-    //        }
-    //
-    //        DispatchQueue.main.async {
-    //            self.speed = speedCategory
-    ////            self.wordsPerSecond = wordsPerSecond
-    //        }
-    //    }
-    
+
     private static func prepareEngine() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {
         let audioEngine = AVAudioEngine()
         
@@ -306,6 +264,7 @@ class SpeechRecognizer: ObservableObject {
     func stopTranscribing() {
         isFinalizing = true
         audioEngine?.stop()
+        audioRecorder?.stop()
         request?.endAudio()
         DispatchQueue.main.async {
             self.isRecording = false
@@ -317,6 +276,25 @@ class SpeechRecognizer: ObservableObject {
             self?.finishTranscribing()
         }
     }
+    
+    // Play the voice record
+	func playRecording() {
+		guard let audioFileURL = audioFileURL else { return }
+		
+		do {
+			audioPlayer = try AVAudioPlayer(contentsOf: audioFileURL)
+			audioPlayer?.delegate = self
+			audioPlayer?.play()
+			isPlaying = true
+		} catch {
+			print("Playback error: \(error.localizedDescription)")
+		}
+	}
+
+	func stopPlayback() {
+		audioPlayer?.stop()
+		isPlaying = false
+	}
     
     /// Finish the transcript after loading
     private func finishTranscribing() {
@@ -331,6 +309,14 @@ class SpeechRecognizer: ObservableObject {
     private func speak(_ message: String) {
         transcript = message
     }
+}
+
+extension SpeechRecognizer: AVAudioPlayerDelegate {
+	func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+		DispatchQueue.main.async {
+			self.isPlaying = false
+		}
+	}
 }
 
 extension SFSpeechRecognizer {
