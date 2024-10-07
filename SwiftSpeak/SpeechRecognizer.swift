@@ -52,6 +52,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
 	private var request: SFSpeechAudioBufferRecognitionRequest?
 	private var task: SFSpeechRecognitionTask?
 	private let recognizer: SFSpeechRecognizer?
+	private let audioSession = AVAudioSession.sharedInstance()
 	
 	private var startTime: Date?
 	private var wordCount: Int = 0
@@ -88,7 +89,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
         reset()
     }
     
-	func reset() {
+	private func reset() {
 		task?.cancel()
 		audioEngine?.stop()
 		audioEngine = nil
@@ -97,6 +98,12 @@ class SpeechRecognizer: NSObject, ObservableObject {
 		audioRecorder?.stop()
 		audioPlayer?.stop()
 		isPlaying = false
+		
+		do {
+			try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+		} catch {
+			print("Failed to deactivate audio session: \(error)")
+		}
 	}
     
     /**
@@ -107,23 +114,26 @@ class SpeechRecognizer: NSObject, ObservableObject {
      */
     
     /// Begins transcribing audio and analyzing speech speed
-    func transcribe() {
-        DispatchQueue(label: "Speech Recognizer Queue", qos: .background).async { [weak self] in
-            guard let self = self, let recognizer = self.recognizer, recognizer.isAvailable else {
-                self?.speakError(RecognizerError.recognizerIsUnavailable)
-                return
-            }
-            
-            do {
-                let (audioEngine, request) = try Self.prepareEngine()
-                self.audioEngine = audioEngine
-                self.request = request
-                self.startTime = Date()
-                self.wordCount = 0
-                self.isFinalizing = false
-                self.lastTranscriptUpdate = Date()
-                
-                // Set up audio recording
+	func transcribe() {
+		DispatchQueue(label: "Speech Recognizer Queue", qos: .background).async { [weak self] in
+			guard let self = self, let recognizer = self.recognizer, recognizer.isAvailable else {
+				self?.speakError(RecognizerError.recognizerIsUnavailable)
+				return
+			}
+			
+			do {
+				try self.audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .mixWithOthers])
+				try self.audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+
+				let (audioEngine, request) = try Self.prepareEngine()
+				self.audioEngine = audioEngine
+				self.request = request
+				self.startTime = Date()
+				self.wordCount = 0
+				self.isFinalizing = false
+				self.lastTranscriptUpdate = Date()
+				
+				// Set up audio recording
 				let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 				self.audioFileURL = documentsPath.appendingPathComponent("speechRecording.m4a")
 				let settings = [
@@ -261,27 +271,36 @@ class SpeechRecognizer: NSObject, ObservableObject {
     }
     
     /// Stops transcribing audio
-    func stopTranscribing() {
-        isFinalizing = true
-        audioEngine?.stop()
-        audioRecorder?.stop()
-        request?.endAudio()
-        DispatchQueue.main.async {
-            self.isRecording = false
-            self.isProcessing = true
-        }
-        
-        // Allow some time for final processing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.finishTranscribing()
-        }
-    }
+	func stopTranscribing() {
+		isFinalizing = true
+		audioEngine?.stop()
+		audioRecorder?.stop()
+		request?.endAudio()
+		
+		do {
+			try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+		} catch {
+			print("Failed to deactivate audio session: \(error)")
+		}
+		
+		DispatchQueue.main.async {
+			self.isRecording = false
+			self.isProcessing = true
+		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+			self?.finishTranscribing()
+		}
+	}
     
     // Play the voice record
 	func playRecording() {
 		guard let audioFileURL = audioFileURL else { return }
 		
 		do {
+			try audioSession.setCategory(.playback, mode: .default)
+			try audioSession.setActive(true)
+			
 			audioPlayer = try AVAudioPlayer(contentsOf: audioFileURL)
 			audioPlayer?.delegate = self
 			audioPlayer?.play()
@@ -294,6 +313,12 @@ class SpeechRecognizer: NSObject, ObservableObject {
 	func stopPlayback() {
 		audioPlayer?.stop()
 		isPlaying = false
+		
+		do {
+			try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+		} catch {
+			print("Failed to deactivate audio session: \(error)")
+		}
 	}
     
     /// Finish the transcript after loading
