@@ -22,6 +22,7 @@ struct MeetingView: View {
 			if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
 				AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
 			}
+			
 			ControlButtonsView(
 				isRecording: speechRecognizer.isRecording,
 				canAnalyze: speechRecognizer.canAnalyze,

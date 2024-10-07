@@ -124,16 +124,16 @@ class SpeechRecognizer: NSObject, ObservableObject {
                 self.lastTranscriptUpdate = Date()
                 
                 // Set up audio recording
-                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                self.audioFileURL = documentsPath.appendingPathComponent("speechRecording.m4a")
-                let settings = [
-                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-                    AVSampleRateKey: 44100,
-                    AVNumberOfChannelsKey: 2,
-                    AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-                ]
-                self.audioRecorder = try AVAudioRecorder(url: self.audioFileURL!, settings: settings)
-                self.audioRecorder?.record()
+				let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+				self.audioFileURL = documentsPath.appendingPathComponent("speechRecording.m4a")
+				let settings = [
+					AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+					AVSampleRateKey: 44100,
+					AVNumberOfChannelsKey: 2,
+					AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+				]
+				self.audioRecorder = try AVAudioRecorder(url: self.audioFileURL!, settings: settings)
+				self.audioRecorder?.record()
                 
                 self.task = recognizer.recognitionTask(with: request) { [weak self] result, error in
                     guard let self = self else { return }
@@ -156,19 +156,19 @@ class SpeechRecognizer: NSObject, ObservableObject {
                     }
                 }
                 
-                DispatchQueue.main.async {
-                    self.isRecording = true
-                    self.canAnalyze = false
-                    self.errorMessage = nil
-                    self.showUnclearSpeechAlert = false
-                    self.isPlaybackAvailable = false
-                }
-            } catch {
-                self.reset()
-                self.speakError(error)
-            }
-        }
-    }
+				DispatchQueue.main.async {
+					self.isRecording = true
+					self.canAnalyze = false
+					self.errorMessage = nil
+					self.showUnclearSpeechAlert = false
+					self.isPlaybackAvailable = false
+				}
+			} catch {
+				self.reset()
+				self.speakError(error)
+			}
+		}
+	}
     
 
     
@@ -303,6 +303,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
             self.isProcessing = false
             self.canAnalyze = true
             self.isFinalizing = false
+			self.isPlaybackAvailable = true
         }
     }
     
