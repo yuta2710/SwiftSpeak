@@ -68,13 +68,38 @@ struct AuthenticationView: View {
                     .cornerRadius(10)
                 }
                 
-                Button("Login with Facebook") {
-                    authManager.signInWithFacebook()
+                VStack {
+                    Button("Login with Facebook") {
+                        authManager.signInWithFacebook()
+                    }
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    
+                    Button("Login with Google") {
+                        self.authManager.isSignInWithGoogle.toggle()
+                        
+                        Task.init {
+                            await authManager.signInWithGoogle() { success in
+                                if success {
+                                    Message.buildLogInfo("[SUCCESS] ==> User login successfully")
+                                }else {
+                                    Message.buildLogError("[ERROR] ==> User login failed")
+                                }
+                                
+                                self.authManager.isSignInWithGoogle.toggle()
+                            }
+                            
+                            
+                        }
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    
                 }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
                 
                 Button(isSignUp ? "Already have an account? Log In" : "Don't have an account? Sign Up") {
                     isSignUp.toggle()
@@ -142,4 +167,9 @@ struct PasswordResetView: View {
             })
         }
     }
+}
+
+#Preview {
+    AuthenticationView()
+        .environmentObject(AuthenticationManager())
 }

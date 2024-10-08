@@ -6,54 +6,98 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct MeetingView: View {
     @StateObject var speechRecognizer = SpeechRecognizer()
     
     var body: some View {
-        VStack(spacing: 20) {
-            TranscriptView(transcript: speechRecognizer.transcript)
+        ZStack {
+            //            Image("Background01")
+            //                .resizable()
+            //                .ignoresSafeArea()
+            RiveViewModel(fileName: "shapes").view()
+                .ignoresSafeArea()
+                .blur(radius: 50)
+                .background(
+                    Image("Spline")
+                        .resizable()
+                        .blur(radius: 50)
+                        .offset(x: 200, y: 100)
+                )
             
-            if speechRecognizer.isProcessing {
-                ProgressView("Processing transcript...")
-                    .progressViewStyle(CircularProgressViewStyle())
-            }
-            
-            if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
-                AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
-            }
-            
-            ControlButtonsView(
-                isRecording: speechRecognizer.isRecording,
-                canAnalyze: speechRecognizer.canAnalyze,
-                onRecordTap: {
-                    if speechRecognizer.isRecording {
-                        speechRecognizer.stopTranscribing()
-                    } else {
-                        speechRecognizer.transcribe()
-                    }
-                },
-                onAnalyzeTap: {
-                    speechRecognizer.analyzeSpeedAndWPM()
+            VStack(spacing: 20) {
+                if !speechRecognizer.transcript.isEmpty {
+                    TranscriptView(transcript: speechRecognizer.transcript)
                 }
-            )
-            
-            if let errorMessage = speechRecognizer.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .padding()
+                
+                
+                if speechRecognizer.isProcessing {
+                    ProgressView("Processing transcript...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+                
+                if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
+                    AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
+                    
+                    // Add the playback button when recording is available
+                    if speechRecognizer.canAnalyze {
+                        Button(action: {
+                            //                            speechRecognizer.playRecordedAudio()
+                        }) {
+                            Text("Play Recording")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                    }
+                }
+                
+                ControlButtonsView(
+                    isRecording: speechRecognizer.isRecording,
+                    canAnalyze: speechRecognizer.canAnalyze,
+                    isPlaybackAvailable: speechRecognizer.isPlaybackAvailable,
+                    isPlaying: speechRecognizer.isPlaying,
+                    onRecordTap: {
+                        if speechRecognizer.isRecording {
+                            speechRecognizer.stopTranscribing()
+                        } else {
+                            speechRecognizer.transcribe()
+                        }
+                    },
+                    onAnalyzeTap: {
+                        speechRecognizer.analyzeSpeedAndWPM()
+                    },
+                    onPlaybackTap: {
+                        if speechRecognizer.isPlaying {
+                            speechRecognizer.stopPlayback()
+                        } else {
+                            speechRecognizer.playRecording()
+                        }
+                    }
+                )
+                
+                if let errorMessage = speechRecognizer.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
             }
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .navigationTitle("Speech Analyzer")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert(isPresented: $speechRecognizer.showUnclearSpeechAlert) {
-            Alert(
-                title: Text("Unclear Speech"),
-                message: Text("Please speak more clearly and slowly."),
-                dismissButton: .default(Text("OK"))
-            )
+            .padding()
+            //            .background(Color(.systemBackground))
+            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .padding()
+            .navigationTitle("Speech Analyzer")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert(isPresented: $speechRecognizer.showUnclearSpeechAlert) {
+                Alert(
+                    title: Text("Unclear Speech"),
+                    message: Text("Please speak more clearly and slowly."),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
     }
 }
@@ -68,8 +112,8 @@ struct TranscriptView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(height: 200)
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .background(.thinMaterial)
+        .cornerRadius(4)
     }
 }
 
@@ -78,21 +122,47 @@ struct AnalysisView: View {
     let wordsPerMinute: Int
     
     var body: some View {
-        VStack(spacing: 10) {
-            Text("Speech Speed: \(speed.rawValue)")
-                .font(.headline)
-            
-            Text("Words per minute: \(wordsPerMinute)")
-                .font(.subheadline)
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading) {
+                Text("Speech Speed: \(speed.rawValue)")
+                    .font(.title2)
+                    .bold()
+                
+                Text("Words per minute: \(wordsPerMinute)")
+                    .font(.subheadline)
+            }
             
             ProgressView(value: Double(wordsPerMinute), total: 250)
                 .progressViewStyle(LinearProgressViewStyle())
                 .frame(height: 10)
                 .accentColor(speedColor)
         }
+        
         .padding()
-        .background(Color(.systemGray6))
+        //        .background(Color(.systemGray6))
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 0, style: .continuous))
         .cornerRadius(10)
+        
+        //        ZStack {
+        //            LinearGradient(gradient: Gradient(stops: [
+        //                .init(color: Color("PrimaryBackground"), location: 0.0),    //
+        //                  ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        //                  .cornerRadius(30)
+        //            VStack {
+        //                // Content of the card goes here
+        //                Text("Featured")
+        //                    .font(.title)
+        //                    .fontWeight(.bold)
+        //                    .foregroundColor(.black)
+        //
+        //                Spacer()
+        //            }
+        //            .padding()
+        //        }
+        //        .frame(width: 350, height: 350)
+        //        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 4)
+        
+        
     }
     
     var speedColor: Color {
@@ -114,8 +184,11 @@ struct AnalysisView: View {
 struct ControlButtonsView: View {
     let isRecording: Bool
     let canAnalyze: Bool
+    let isPlaybackAvailable: Bool
+    let isPlaying: Bool
     let onRecordTap: () -> Void
     let onAnalyzeTap: () -> Void
+    let onPlaybackTap: () -> Void
     
     var body: some View {
         HStack(spacing: 20) {
@@ -128,6 +201,7 @@ struct ControlButtonsView: View {
                     .background(isRecording ? Color.red : Color.blue)
                     .cornerRadius(10)
             }
+            .shadow(color: .blue, radius: 4, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 2)
             
             Button(action: onAnalyzeTap) {
                 Text("Analyze")
@@ -135,11 +209,32 @@ struct ControlButtonsView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(minWidth: 100)
-                    .background(canAnalyze ? Color.green : Color.gray)
+                    .background(canAnalyze ? Color.green : Color(hex: "000000"))
                     .cornerRadius(10)
             }
             .disabled(!canAnalyze)
+            .shadow(
+                color: canAnalyze ? Color.green : Color(hex: "292782"), radius: 4, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 2)
+            .background(.ultraThinMaterial)
+            
         }
+        
+        if isPlaybackAvailable {
+            Button(action: onPlaybackTap) {
+                HStack {
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    Text(isPlaying ? "Pause" : "Play Recording")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .frame(minWidth: 200)
+                .background(Color.orange)
+                .cornerRadius(10)
+            }
+        }
+        
+        
     }
 }
 

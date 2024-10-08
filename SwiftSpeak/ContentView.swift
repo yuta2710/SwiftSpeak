@@ -9,7 +9,7 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
-    @State private var currentTab: Tab = Tab.home
+    @State private var currentTab: Tab = Tab.profile
     
     init() {
         UITabBar.appearance().backgroundColor = .white
@@ -32,6 +32,13 @@ struct ContentView: View {
                             Text("Search")
                         }
                         .tag(Tab.search)
+                    
+                    UserProfileView()
+                        .tabItem {
+                            Image(systemName: "person.crop.circle")
+                            Text("Profile")
+                        }
+                        .tag(Tab.profile)
                 }
             }
             .ignoresSafeArea(.keyboard)
@@ -40,5 +47,6 @@ struct ContentView: View {
 }
 #Preview {
     ContentView()
+        .environmentObject(AuthenticationManager())
 //        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

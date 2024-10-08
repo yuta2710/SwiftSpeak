@@ -13,6 +13,7 @@ struct SwiftSpeakApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let persistenceController = PersistenceController.shared
     @StateObject private var authManager = AuthenticationManager()
+    @State private var isSplashActive = false
     
     init() {
         FirebaseApp.configure()
@@ -24,7 +25,11 @@ struct SwiftSpeakApp: App {
                 ContentView()
                     .environmentObject(authManager)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
-            } else {
+            } 
+//            else if !authManager.isAuthenticated {
+//                SplashScreen(isActive: $isSplashActive)
+//            }
+            else {
                 AuthenticationView()
                     .environmentObject(authManager)
             }

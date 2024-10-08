@@ -10,4 +10,5 @@ import Foundation
 enum Tab: String, CaseIterable {
     case home = "house.fill"
     case search = "magnifyingglass"
+    case profile = "person.crop.circle"
 }
