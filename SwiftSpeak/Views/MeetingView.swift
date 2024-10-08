@@ -39,20 +39,6 @@ struct MeetingView: View {
                 
                 if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
                     AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
-                    
-                    // Add the playback button when recording is available
-                    if speechRecognizer.canAnalyze {
-                        Button(action: {
-                            //                            speechRecognizer.playRecordedAudio()
-                        }) {
-                            Text("Play Recording")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                        }
-                    }
                 }
                 
                 ControlButtonsView(
