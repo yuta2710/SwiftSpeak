@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F5189692CC1110600039B19 /* RecordingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5189682CC1110600039B19 /* RecordingsListView.swift */; };
 		3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */; };
 		3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */; };
 		3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */; };
@@ -69,6 +70,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F5189682CC1110600039B19 /* RecordingsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsListView.swift; sourceTree = "<group>"; };
 		3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				CF3ED9D72CAD83B40087D136 /* UserSelectSpeedTypeView.swift */,
 				3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */,
 				CFCBC6ED2CB166AB00833DB2 /* UserProfileView.swift */,
+				3F5189682CC1110600039B19 /* RecordingsListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 				CF3ED9D82CAD83B40087D136 /* UserSelectSpeedTypeView.swift in Sources */,
 				3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */,
 				CFCBC6EE2CB166AB00833DB2 /* UserProfileView.swift in Sources */,
+				3F5189692CC1110600039B19 /* RecordingsListView.swift in Sources */,
 				3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */,
 				CFCBC6F72CB17D2300833DB2 /* SplashScreen.swift in Sources */,
 				CFCBC6F42CB173D700833DB2 /* SolidButton.swift in Sources */,
@@ -650,7 +654,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -685,7 +689,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rmit.SwiftSpeak2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

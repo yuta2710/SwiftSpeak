@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import FacebookLogin
 
 struct AuthenticationView: View {
     @StateObject private var authManager = AuthenticationManager()
@@ -69,14 +68,6 @@ struct AuthenticationView: View {
                 }
                 
                 VStack {
-                    Button("Login with Facebook") {
-                        authManager.signInWithFacebook()
-                    }
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    
                     Button("Login with Google") {
                         self.authManager.isSignInWithGoogle.toggle()
                         

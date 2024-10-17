@@ -102,42 +102,6 @@ class AuthenticationManager: ObservableObject {
 		}
 	}
 
-	func signInWithFacebook() {
-		guard signInEnable else {
-			errorMessage = "Sign-in is currently disabled."
-			return
-		}
-
-		let loginManager = LoginManager()
-		loginManager.logIn(permissions: ["public_profile", "email"], from: nil)
-		{ [weak self] (result, error) in
-			if let error = error {
-				self?.errorMessage =
-					"Facebook login failed: \(error.localizedDescription)"
-				return
-			}
-
-			guard let accessToken = AccessToken.current else {
-				self?.errorMessage = "Failed to get access token"
-				return
-			}
-
-			let credential = FacebookAuthProvider.credential(
-				withAccessToken: accessToken.tokenString)
-
-			Auth.auth().signIn(with: credential) {
-				[weak self] (authResult, error) in
-				if let error = error {
-					self?.errorMessage =
-						"Firebase auth failed: \(error.localizedDescription)"
-				} else {
-					self?.isAuthenticated = true
-					self?.signInEnable = false
-				}
-			}
-		}
-	}
-
 	func signInWithGoogle(callback: @escaping (Bool) -> Void) async -> Bool {
 		guard let clientId = FirebaseApp.app()?.options.clientID else {
 			return false

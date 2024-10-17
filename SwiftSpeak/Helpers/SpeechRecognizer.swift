@@ -9,13 +9,28 @@ import AVFoundation
 import Foundation
 import Speech
 import SwiftUI
+import Firebase
+import FirebaseStorage
+import FirebaseFirestore
+import FirebaseAuth
 
-enum SpeechSpeed: String {
-    case Slow = "Slow"
-    case Normal = "Normal"
-    case Fast = "Fast"
-    case VeryFast = "Very Fast"
-    case Unclear = "Unclear"
+enum SpeechSpeed: String, Codable {
+	case Slow = "Slow"
+	case Normal = "Normal"
+	case Fast = "Fast"
+	case VeryFast = "Very Fast"
+	case Unclear = "Unclear"
+}
+
+struct RecordingMetadata: Codable {
+	let id: String
+	let name: String
+	let timestamp: Date
+	let duration: TimeInterval
+	let wordsPerMinute: Int
+	let speechSpeed: SpeechSpeed
+	let transcript: String
+	let storageUrl: String
 }
 
 class SpeechRecognizer: NSObject, ObservableObject {
@@ -47,7 +62,10 @@ class SpeechRecognizer: NSObject, ObservableObject {
     @Published var showUnclearSpeechAlert: Bool = false
     @Published var isPlaybackAvailable: Bool = false
     @Published var isPlaying: Bool = false
-
+	@Published var recordings: [RecordingMetadata] = []
+	
+	private let storage = Storage.storage()
+	private let db = Firestore.firestore()
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
@@ -320,7 +338,94 @@ class SpeechRecognizer: NSObject, ObservableObject {
             print("Failed to deactivate audio session: \(error)")
         }
     }
+	
+	/// Save the recording
+	func saveRecording(name: String) {
+	 guard let audioFileURL = audioFileURL,
+		   let userId = Auth.auth().currentUser?.uid else { return }
+
+	 let storageRef = storage.reference().child("recordings/\(userId)/\(UUID().uuidString).m4a")
+	 
+	 storageRef.putFile(from: audioFileURL, metadata: nil) { metadata, error in
+		 if let error = error {
+			 print("Error uploading file: \(error.localizedDescription)")
+			 return
+		 }
+		 
+		 storageRef.downloadURL { url, error in
+			 guard let downloadURL = url else {
+				 print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+				 return
+			 }
+			 
+			 let metadata = RecordingMetadata(
+				 id: UUID().uuidString,
+				 name: name,
+				 timestamp: Date(),
+				 duration: self.audioPlayer?.duration ?? 0,
+				 wordsPerMinute: self.wordsPerMinute,
+				 speechSpeed: self.speed,
+				 transcript: self.transcript,
+				 storageUrl: downloadURL.absoluteString
+			 )
+			 
+			 self.saveMetadataToFirestore(metadata: metadata)
+		 }
+	 }
+ }
+	
+	/// Save the metadata with recording to Firebase
+	private func saveMetadataToFirestore(metadata: RecordingMetadata) {
+		guard let userId = Auth.auth().currentUser?.uid else { return }
+		
+		do {
+			try db.collection("users").document(userId).collection("recordings").document(metadata.id).setData(from: metadata)
+			self.loadRecordings()
+		} catch let error {
+			print("Error saving metadata: \(error.localizedDescription)")
+		}
+	}
+	
+	func loadRecordings() {
+		guard let userId = Auth.auth().currentUser?.uid else { return }
+		
+		db.collection("users").document(userId).collection("recordings").getDocuments { querySnapshot, error in
+			if let error = error {
+				print("Error getting documents: \(error.localizedDescription)")
+				return
+			}
+			
+			self.recordings = querySnapshot?.documents.compactMap { document in
+				try? document.data(as: RecordingMetadata.self)
+			} ?? []
+		}
+	}
     
+	/// Delete the recording
+	func deleteRecording(id: String) {
+		guard let userId = Auth.auth().currentUser?.uid else { return }
+		
+		// Delete from Firestore
+		db.collection("users").document(userId).collection("recordings").document(id).delete { error in
+			if let error = error {
+				print("Error deleting document: \(error.localizedDescription)")
+			} else {
+				// Delete from Storage
+				if let recording = self.recordings.first(where: { $0.id == id }),
+				   let storageUrl = URL(string: recording.storageUrl) {
+					let storageRef = self.storage.reference(forURL: storageUrl.absoluteString)
+					storageRef.delete { error in
+						if let error = error {
+							print("Error deleting file: \(error.localizedDescription)")
+						} else {
+							self.loadRecordings()
+						}
+					}
+				}
+			}
+		}
+	}
+	
     /// Finish the transcript after loading
     private func finishTranscribing() {
         reset()

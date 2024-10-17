@@ -9,7 +9,9 @@ import SwiftUI
 import RiveRuntime
 
 struct MeetingView: View {
-    @StateObject var speechRecognizer = SpeechRecognizer()
+	@ObservedObject var speechRecognizer: SpeechRecognizer
+	@State private var showingSaveDialog = false
+	@State private var recordingName = ""
     
     var body: some View {
         ZStack {
@@ -70,9 +72,34 @@ struct MeetingView: View {
                         .foregroundColor(.red)
                         .padding()
                 }
+				
+				if !speechRecognizer.isRecording && !speechRecognizer.isProcessing && speechRecognizer.isPlaybackAvailable {
+					Button("Save Recording") {
+						showingSaveDialog = true
+					}
+					.padding()
+					.background(Color.green)
+					.foregroundColor(.white)
+					.cornerRadius(10)
+				}
+			}
+			.padding()
+			.background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+			.padding()
+			.navigationTitle("Speech Analyzer")
+			.navigationBarTitleDisplayMode(.inline)
+			.alert("Save Recording", isPresented: $showingSaveDialog) {
+				TextField("Recording Name", text: $recordingName)
+				Button("Save") {
+					speechRecognizer.saveRecording(name: recordingName)
+					recordingName = ""
+				}
+				Button("Cancel", role: .cancel) {}
+			} message: {
+				Text("Enter a name for your recording")
             }
             .padding()
-            //            .background(Color(.systemBackground))
+//            .background(Color(.systemBackground))
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
             .padding()
             .navigationTitle("Speech Analyzer")
@@ -227,7 +254,7 @@ struct ControlButtonsView: View {
 struct MeetingView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            MeetingView()
+			MeetingView(speechRecognizer: SpeechRecognizer())
         }
     }
 }

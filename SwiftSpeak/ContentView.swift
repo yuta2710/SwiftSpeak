@@ -10,7 +10,8 @@ import CoreData
 
 struct ContentView: View {
     @State private var currentTab: Tab = Tab.profile
-    
+	@StateObject var speechRecognizer = SpeechRecognizer()
+	
     init() {
         UITabBar.appearance().backgroundColor = .white
     }
@@ -19,7 +20,7 @@ struct ContentView: View {
         NavigationView {
             VStack (spacing: 0.0) {
                 TabView(selection: $currentTab) {
-                    MeetingView()
+					MeetingView(speechRecognizer: SpeechRecognizer())
                         .tabItem {
                             Image(systemName: Tab.home.rawValue)
                             Text("Home")
@@ -32,7 +33,13 @@ struct ContentView: View {
                             Text("Search")
                         }
                         .tag(Tab.search)
-                    
+					
+					RecordingsListView(speechRecognizer: speechRecognizer)
+						.tabItem {
+							Image(systemName: "list.bullet")
+							Text("Recordings")
+						}
+					
                     UserProfileView()
                         .tabItem {
                             Image(systemName: "person.crop.circle")
@@ -42,6 +49,9 @@ struct ContentView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
+			.onAppear{
+				speechRecognizer.loadRecordings()
+			}
         }
     }
 }

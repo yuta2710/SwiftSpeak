@@ -3,28 +3,28 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleURLTypes</key>
-	   <array>
-		 <dict>
-		   <key>CFBundleURLSchemes</key>
-		   <array>
-			 <string>fb1891053478044852</string>
-			 <string>com.googleusercontent.apps.246068952570-ohr0f1eehl56vf1gm8fvbdbe9hbskkrd</string>
-			 <string>com.rmit.SwiftSpeak</string>
-		   </array>
-		 </dict>
-	   </array>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1891053478044852</string>
+				<string>com.googleusercontent.apps.246068952570-ohr0f1eehl56vf1gm8fvbdbe9hbskkrd</string>
+				<string>com.rmit.SwiftSpeak</string>
+			</array>
+		</dict>
+	</array>
 	<key>FacebookAppID</key>
-	   <string>1891053478044852</string>
-	   <key>FacebookClientToken</key>
-	   <string>85d8affcad9d7726fb5fe7c085eabb2e</string>
-	   <key>FacebookDisplayName</key>
-	   <string>SwiftSpeak</string>
-	   <key>LSApplicationQueriesSchemes</key>
-	   <array>
-		 <string>fbapi</string>
-		 <string>fb-messenger-share-api</string>
-		 <string>fbauth2</string>
-		 <string>fbshareextension</string>
-	   </array>
+	<string>1891053478044852</string>
+	<key>FacebookClientToken</key>
+	<string>85d8affcad9d7726fb5fe7c085eabb2e</string>
+	<key>FacebookDisplayName</key>
+	<string>SwiftSpeak</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 </dict>
 </plist>
