@@ -10,6 +10,7 @@ import RiveRuntime
 
 struct MeetingView: View {
 	@ObservedObject var speechRecognizer: SpeechRecognizer
+	var onSave: () -> Void
 	@State private var showingSaveDialog = false
 	@State private var recordingName = ""
     
@@ -76,6 +77,9 @@ struct MeetingView: View {
 				if !speechRecognizer.isRecording && !speechRecognizer.isProcessing && speechRecognizer.isPlaybackAvailable {
 					Button("Save Recording") {
 						showingSaveDialog = true
+						speechRecognizer.saveRecording(name: recordingName)
+						recordingName = ""
+						onSave()
 					}
 					.padding()
 					.background(Color.green)
@@ -254,7 +258,7 @@ struct ControlButtonsView: View {
 struct MeetingView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-			MeetingView(speechRecognizer: SpeechRecognizer())
+			MeetingView(speechRecognizer: SpeechRecognizer(), onSave: {})
         }
     }
 }

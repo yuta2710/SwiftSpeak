@@ -18,7 +18,7 @@ struct ContentView: View {
 	
 	var body: some View {
 		TabView(selection: $currentTab) {
-			MeetingView(speechRecognizer: speechRecognizer)
+			MeetingView(speechRecognizer: speechRecognizer, onSave: refreshRecordings)
 				.tabItem {
 					Image(systemName: Tab.home.rawValue)
 					Text("Home")
@@ -47,6 +47,10 @@ struct ContentView: View {
 				.tag(Tab.profile)
 		}
 		.ignoresSafeArea(.keyboard)
+	}
+	
+	func refreshRecordings() {
+		speechRecognizer.loadRecordings()
 	}
 }
 
