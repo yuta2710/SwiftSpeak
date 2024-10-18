@@ -10,22 +10,12 @@ import AVFoundation
 
 struct RecordingsListView: View {
 	@ObservedObject var speechRecognizer: SpeechRecognizer
-	@State private var selectedRecording: RecordingMetadata?
-	
+
 	var body: some View {
 		NavigationView {
-			List {
-				ForEach(speechRecognizer.recordings, id: \.id) { recording in
-					NavigationLink(destination: DetailedRecordingView(recording: recording, speechRecognizer: speechRecognizer)) {
-						VStack(alignment: .leading) {
-							Text(recording.name)
-								.font(.headline)
-							Text(recording.timestamp, style: .date)
-								.font(.subheadline)
-							Text("Duration: \(formattedDuration(recording.duration))")
-								.font(.subheadline)
-						}
-					}
+			List(speechRecognizer.recordings, id: \.id) { recording in
+				NavigationLink(destination: RecordingDetailView(recording: recording, speechRecognizer: speechRecognizer)) {
+					Text(recording.name)
 				}
 			}
 			.navigationTitle("Recordings")
@@ -34,16 +24,9 @@ struct RecordingsListView: View {
 			}
 		}
 	}
-	
-	private func formattedDuration(_ duration: TimeInterval) -> String {
-		let formatter = DateComponentsFormatter()
-		formatter.allowedUnits = [.hour, .minute, .second]
-		formatter.unitsStyle = .abbreviated
-		return formatter.string(from: duration) ?? ""
-	}
 }
 
-struct DetailedRecordingView: View {
+struct RecordingDetailView: View {
 	let recording: RecordingMetadata
 	@ObservedObject var speechRecognizer: SpeechRecognizer
 	@State private var isPlaying = false
