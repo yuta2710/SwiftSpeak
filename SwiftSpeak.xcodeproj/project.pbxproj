@@ -11,6 +11,7 @@
 		3F60C0D62CAFC17F008D2AB3 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */; };
 		3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */; };
 		3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */; };
+		CF38246E2CC2800000A3BE86 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38246D2CC2800000A3BE86 /* TabBar.swift */; };
 		CF3ED99F2CAD37C90087D136 /* SwiftSpeakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */; };
 		CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9A02CAD37C90087D136 /* ContentView.swift */; };
 		CF3ED9A32CAD37CA0087D136 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF3ED9A22CAD37CA0087D136 /* Assets.xcassets */; };
@@ -74,6 +75,7 @@
 		3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		CF38246D2CC2800000A3BE86 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		CF3ED99B2CAD37C90087D136 /* SwiftSpeak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSpeak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpeakApp.swift; sourceTree = "<group>"; };
 		CF3ED9A02CAD37C90087D136 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 			children = (
 				CFCBC6F52CB17D1A00833DB2 /* Loadings */,
 				CFCBC6F22CB173CC00833DB2 /* Buttons */,
+				CF38246D2CC2800000A3BE86 /* TabBar.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -457,6 +460,7 @@
 			files = (
 				3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */,
 				CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */,
+				CF38246E2CC2800000A3BE86 /* TabBar.swift in Sources */,
 				CFCBC6F12CB1677C00833DB2 /* UserProfileModel.swift in Sources */,
 				CF3ED9AB2CAD37CA0087D136 /* SwiftSpeak.xcdatamodeld in Sources */,
 				CF3ED9D82CAD83B40087D136 /* UserSelectSpeedTypeView.swift in Sources */,
