@@ -7,11 +7,13 @@
 
 import SwiftUI
 import RiveRuntime
+import UniformTypeIdentifiers
 
 struct MeetingView: View {
   @ObservedObject var speechRecognizer: SpeechRecognizer
   @State private var showingSaveDialog = false
   @State private var recordingName = ""
+  @State private var isImporting = false
   
   var body: some View {
     ZStack {
@@ -56,6 +58,39 @@ struct MeetingView: View {
         if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
           AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
         }
+		  
+		  if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
+			  Button(action: {
+				  isImporting = true
+			  }) {
+				  HStack {
+					  Image(systemName: "square.and.arrow.down")
+					  Text("Import Recording")
+				  }
+				  .padding()
+				  .background(Color.blue)
+				  .foregroundColor(.white)
+				  .cornerRadius(10)
+			  }
+			  .fileImporter(
+				  isPresented: $isImporting,
+				  allowedContentTypes: [UTType.audio],
+				  allowsMultipleSelection: false
+			  ) { result in
+				  do {
+					  let selectedFile = try result.get().first!
+					  if selectedFile.startAccessingSecurityScopedResource() {
+						  defer { selectedFile.stopAccessingSecurityScopedResource() }
+						  try speechRecognizer.importRecording(from: selectedFile)
+					  } else {
+						  throw NSError(domain: "AccessError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to access the file."])
+					  }
+				  } catch {
+					  print("Error importing file: \(error.localizedDescription)")
+					  // Show error alert to user
+				  }
+			  }
+		  }
         
         ControlButtonsView(
           isRecording: speechRecognizer.isRecording,

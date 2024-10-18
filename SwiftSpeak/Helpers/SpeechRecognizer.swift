@@ -65,6 +65,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
   @Published var isPlaybackAvailable: Bool = false
   @Published var isPlaying: Bool = false
   @Published var recordings: [RecordingMetadata] = []
+  @Published var exportMessage: String = ""
   
   private let storage = Storage.storage()
   private let db = Firestore.firestore()
@@ -220,6 +221,136 @@ class SpeechRecognizer: NSObject, ObservableObject {
       }
     }
   }
+	/// Importing a voice record into the app from local devices
+	func importRecording(from url: URL) throws {
+		let audioData = try Data(contentsOf: url)
+		guard audioData.count <= 10 * 1024 * 1024 else { // 10MB limit (self set)
+			throw NSError(domain: "ImportError", code: 1, userInfo: [NSLocalizedDescriptionKey: "File size exceeds \(audioData.count)MB limit."])
+		}
+		
+		let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".m4a")
+		try audioData.write(to: tempURL)
+		
+		let audioPlayer = try AVAudioPlayer(contentsOf: tempURL)
+		let duration = audioPlayer.duration
+		
+		/// Perform speech recognition
+		let recognizer = SFSpeechRecognizer()
+		let request = SFSpeechURLRecognitionRequest(url: tempURL)
+		
+		recognizer?.recognitionTask(with: request) { [weak self] (result, error) in
+			guard let self = self else { return }
+			
+			if let error = error {
+				DispatchQueue.main.async {
+					self.errorMessage = "Unable to transcribe: \(error.localizedDescription)"
+				}
+				return
+			}
+			
+			guard let result = result, result.isFinal else { return }
+			
+			let transcript = result.bestTranscription.formattedString
+			let wordCount = transcript.split(separator: " ").count
+			let wordsPerMinute = Int(Double(wordCount) / (duration / 60.0))
+			let speed = self.categorizeSpeechSpeed(wordsPerMinute: wordsPerMinute)
+			
+			DispatchQueue.main.async {
+				self.transcript = transcript
+				self.wordsPerMinute = wordsPerMinute
+				self.speed = speed
+				self.canAnalyze = true
+				self.isPlaybackAvailable = true
+			}
+			
+			/// Save the recording to Firebase
+			self.saveImportedRecording(url: tempURL, transcript: transcript, duration: duration, wordsPerMinute: wordsPerMinute, speed: speed)
+		}
+	}
+	
+	/// Save the recording into Firebase with M4A file format
+	private func saveImportedRecording(url: URL, transcript: String, duration: TimeInterval, wordsPerMinute: Int, speed: SpeechSpeed) {
+		guard let userId = Auth.auth().currentUser?.uid else { return }
+		
+		let recordId = UUID().uuidString
+		let storageRef = storage.reference().child("recordings/\(userId)/\(recordId).m4a")
+		
+		storageRef.putFile(from: url, metadata: nil) { metadata, error in
+			if let error = error {
+				print("Error uploading file: \(error.localizedDescription)")
+				return
+			}
+			
+			storageRef.downloadURL { url, error in
+				guard let downloadURL = url else {
+					print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+					return
+				}
+				
+				let metadata = RecordingMetadata(
+					id: recordId,
+					name: "Imported Recording",
+					timestamp: Date(),
+					duration: duration,
+					wordsPerMinute: wordsPerMinute,
+					speechSpeed: speed,
+					transcript: transcript,
+					storageUrl: downloadURL.absoluteString
+				)
+				
+				self.saveMetadataToFirestore(metadata: metadata)
+				
+				DispatchQueue.main.async {
+					self.recordings.append(metadata)
+					self.recordings.sort { $0.timestamp > $1.timestamp }
+				}
+			}
+		}
+	}
+	
+	/// Export the recording after save the recording in the app
+	func exportRecording(_ recording: RecordingMetadata, completion: @escaping (Result<URL, Error>) -> Void) {
+		guard let url = URL(string: recording.storageUrl) else {
+			completion(.failure(NSError(domain: "ExportError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid recording URL"])))
+			return
+		}
+		
+		URLSession.shared.dataTask(with: url) { data, response, error in
+			if let error = error {
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+				return
+			}
+			
+			guard let data = data else {
+				DispatchQueue.main.async {
+					completion(.failure(NSError(domain: "ExportError", code: 2, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+				}
+				return
+			}
+			
+			do {
+				let fileManager = FileManager.default
+				let downloadsPath = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+				let destinationURL = downloadsPath.appendingPathComponent("\(recording.name).m4a")
+				
+				/// Remove the file if a file with the same name exists
+				if fileManager.fileExists(atPath: destinationURL.path) {
+					try fileManager.removeItem(at: destinationURL)
+				}
+				
+				try data.write(to: destinationURL)
+				DispatchQueue.main.async {
+					completion(.success(destinationURL))
+				}
+			} catch {
+				DispatchQueue.main.async {
+					completion(.failure(error))
+				}
+			}
+		}.resume()
+	}
   
   /// Function to analyze the text WPM
   func analyzeSpeedAndWPM() {
