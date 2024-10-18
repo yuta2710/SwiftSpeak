@@ -29,7 +29,8 @@ struct ContentView: View {
           case .timer:
             UserSelectSpeedTypeView()
           case .bell:
-            RecordingsListView(speechRecognizer: speechRecognizer)
+            RecordingsListView()
+              .environmentObject(speechRecognizer)
           case .user:
             UserProfileView()
         }
@@ -39,10 +40,11 @@ struct ContentView: View {
         .background(
           LinearGradient(colors: [Color("Background").opacity(0), Color("Background")], startPoint: .top, endPoint: .bottom)
             .frame(height: 150)
+            .offset(y: 36)
             .frame(maxHeight: .infinity, alignment: .bottom)
             .allowsHitTesting(false)
         )
-        .ignoresSafeArea()
+//        .ignoresSafeArea()
     }
   }
 }

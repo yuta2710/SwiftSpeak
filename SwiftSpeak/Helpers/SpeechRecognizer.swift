@@ -88,6 +88,8 @@ class SpeechRecognizer: NSObject, ObservableObject {
     recognizer = SFSpeechRecognizer()
     super.init()
     
+    self.loadRecordings()
+    
     Task(priority: .background) {
       do {
         guard recognizer != nil else {
@@ -405,6 +407,15 @@ class SpeechRecognizer: NSObject, ObservableObject {
         )
         
         self.saveMetadataToFirestore(metadata: metadata)
+        
+        DispatchQueue.main.async {
+          print("Size of recordings before updated view model \(self.recordings.count)")
+          self.recordings.append(metadata)
+          self.recordings = self.recordings.sorted(by: {$0.timestamp > $1.timestamp})
+          print("Size of recordings after updated view model \(self.recordings.count)")
+          
+        }
+//        self.loadRecordings()
       }
     }
   }
@@ -416,7 +427,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
     do {
       try db.collection("users").document(userId).collection("recordings")
         .document(metadata.id).setData(from: metadata)
-      self.loadRecordings()
+
     } catch let error {
       print("Error saving metadata: \(error.localizedDescription)")
     }
@@ -438,6 +449,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
         querySnapshot?.documents.compactMap { document in
           try? document.data(as: RecordingMetadata.self)
         } ?? []
+        self.recordings = self.recordings.sorted(by: {$0.timestamp > $1.timestamp})
       }
   }
   

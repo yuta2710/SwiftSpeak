@@ -78,6 +78,7 @@ struct TabBar: View {
       )
       .padding(.horizontal, 24)
     }
+    .environmentObject(SpeechRecognizer())
   }
 }
 
