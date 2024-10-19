@@ -12,6 +12,7 @@
 		3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */; };
 		3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */; };
 		CF38246E2CC2800000A3BE86 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF38246D2CC2800000A3BE86 /* TabBar.swift */; };
+		CF3824A92CC3B39400A3BE86 /* GradientTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3824A82CC3B39400A3BE86 /* GradientTextField.swift */; };
 		CF3ED99F2CAD37C90087D136 /* SwiftSpeakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */; };
 		CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED9A02CAD37C90087D136 /* ContentView.swift */; };
 		CF3ED9A32CAD37CA0087D136 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF3ED9A22CAD37CA0087D136 /* Assets.xcassets */; };
@@ -32,6 +33,15 @@
 		CF7A659D2CB520160016C4E8 /* menu_button.riv in Resources */ = {isa = PBXBuildFile; fileRef = CF7A65952CB520160016C4E8 /* menu_button.riv */; };
 		CF7A659E2CB520160016C4E8 /* shapes.riv in Resources */ = {isa = PBXBuildFile; fileRef = CF7A65962CB520160016C4E8 /* shapes.riv */; };
 		CF7A65A12CB5203C0016C4E8 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = CF7A65A02CB5203C0016C4E8 /* RiveRuntime */; };
+		CFABDF432CC3B69400724489 /* GradientIconTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFABDF422CC3B69400724489 /* GradientIconTextField.swift */; };
+		CFABDF452CC3B6F200724489 /* VisualEffectBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFABDF442CC3B6EA00724489 /* VisualEffectBlur.swift */; };
+		CFABDF472CC3D41200724489 /* shapes_2.riv in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF462CC3D41200724489 /* shapes_2.riv */; };
+		CFABDF4C2CC3FF2C00724489 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF492CC3FF2C00724489 /* Inter-SemiBold.ttf */; };
+		CFABDF4D2CC3FF2C00724489 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF4A2CC3FF2C00724489 /* Poppins-Bold.ttf */; };
+		CFABDF4E2CC3FF2C00724489 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF482CC3FF2C00724489 /* Inter-Regular.ttf */; };
+		CFABDF512CC4016B00724489 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF4F2CC4016B00724489 /* Poppins-Medium.ttf */; };
+		CFABDF522CC4016B00724489 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CFABDF502CC4016B00724489 /* Poppins-SemiBold.ttf */; };
+		CFABDF542CC403E500724489 /* RadialButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFABDF532CC403E500724489 /* RadialButton.swift */; };
 		CFCBC5CB2CADB49300833DB2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCBC5CA2CADB49300833DB2 /* Constants.swift */; };
 		CFCBC6C92CB138CE00833DB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFCBC6C82CB138CE00833DB2 /* GoogleService-Info.plist */; };
 		CFCBC6CE2CB1394000833DB2 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = CFCBC6CD2CB1394000833DB2 /* FacebookBasics */; };
@@ -76,6 +86,7 @@
 		3F60C0D72CAFC1B8008D2AB3 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
 		3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF38246D2CC2800000A3BE86 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		CF3824A82CC3B39400A3BE86 /* GradientTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientTextField.swift; sourceTree = "<group>"; };
 		CF3ED99B2CAD37C90087D136 /* SwiftSpeak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftSpeak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSpeakApp.swift; sourceTree = "<group>"; };
 		CF3ED9A02CAD37C90087D136 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -99,6 +110,15 @@
 		CF7A65942CB520160016C4E8 /* icons.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = icons.riv; sourceTree = "<group>"; };
 		CF7A65952CB520160016C4E8 /* menu_button.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = menu_button.riv; sourceTree = "<group>"; };
 		CF7A65962CB520160016C4E8 /* shapes.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = shapes.riv; sourceTree = "<group>"; };
+		CFABDF422CC3B69400724489 /* GradientIconTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientIconTextField.swift; sourceTree = "<group>"; };
+		CFABDF442CC3B6EA00724489 /* VisualEffectBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectBlur.swift; sourceTree = "<group>"; };
+		CFABDF462CC3D41200724489 /* shapes_2.riv */ = {isa = PBXFileReference; lastKnownFileType = file; path = shapes_2.riv; sourceTree = "<group>"; };
+		CFABDF482CC3FF2C00724489 /* Inter-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Regular.ttf"; sourceTree = "<group>"; };
+		CFABDF492CC3FF2C00724489 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-SemiBold.ttf"; sourceTree = "<group>"; };
+		CFABDF4A2CC3FF2C00724489 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
+		CFABDF4F2CC4016B00724489 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		CFABDF502CC4016B00724489 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		CFABDF532CC403E500724489 /* RadialButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialButton.swift; sourceTree = "<group>"; };
 		CFCBC5CA2CADB49300833DB2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CFCBC6C82CB138CE00833DB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFCBC6EB2CB1616C00833DB2 /* MessageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHelper.swift; sourceTree = "<group>"; };
@@ -146,6 +166,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF3824A52CC3B37100A3BE86 /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				CF3824A82CC3B39400A3BE86 /* GradientTextField.swift */,
+				CFABDF422CC3B69400724489 /* GradientIconTextField.swift */,
+			);
+			path = TextField;
+			sourceTree = "<group>";
+		};
 		CF3ED9922CAD37C90087D136 = {
 			isa = PBXGroup;
 			children = (
@@ -178,6 +207,7 @@
 				CF3ED9D32CAD829C0087D136 /* Components */,
 				CF3ED9D22CAD82970087D136 /* Views */,
 				CF3ED9D12CAD38D20087D136 /* Info.plist */,
+				CFABDF4B2CC3FF2C00724489 /* Fonts */,
 				CF3ED99E2CAD37C90087D136 /* SwiftSpeakApp.swift */,
 				CF3ED9A02CAD37C90087D136 /* ContentView.swift */,
 				3F60C0D92CAFC2A1008D2AB3 /* AppDelegate.swift */,
@@ -229,6 +259,7 @@
 		CF3ED9D32CAD829C0087D136 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				CF3824A52CC3B37100A3BE86 /* TextField */,
 				CFCBC6F52CB17D1A00833DB2 /* Loadings */,
 				CFCBC6F22CB173CC00833DB2 /* Buttons */,
 				CF38246D2CC2800000A3BE86 /* TabBar.swift */,
@@ -246,6 +277,7 @@
 		CF3ED9D52CAD82A90087D136 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CFABDF442CC3B6EA00724489 /* VisualEffectBlur.swift */,
 				CF3ED9CD2CAD37EB0087D136 /* SpeechRecognizer.swift */,
 				3F60C0D52CAFC17F008D2AB3 /* AuthenticationManager.swift */,
 				CFCBC6EB2CB1616C00833DB2 /* MessageHelper.swift */,
@@ -257,6 +289,7 @@
 		CF7A65972CB520160016C4E8 /* RiveAssets */ = {
 			isa = PBXGroup;
 			children = (
+				CFABDF462CC3D41200724489 /* shapes_2.riv */,
 				CF7A65902CB520160016C4E8 /* button.riv */,
 				CF7A65912CB520160016C4E8 /* check.riv */,
 				CF7A65922CB520160016C4E8 /* confetti.riv */,
@@ -266,6 +299,18 @@
 				CF7A65962CB520160016C4E8 /* shapes.riv */,
 			);
 			path = RiveAssets;
+			sourceTree = "<group>";
+		};
+		CFABDF4B2CC3FF2C00724489 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				CFABDF4F2CC4016B00724489 /* Poppins-Medium.ttf */,
+				CFABDF502CC4016B00724489 /* Poppins-SemiBold.ttf */,
+				CFABDF482CC3FF2C00724489 /* Inter-Regular.ttf */,
+				CFABDF492CC3FF2C00724489 /* Inter-SemiBold.ttf */,
+				CFABDF4A2CC3FF2C00724489 /* Poppins-Bold.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		CFCBC5C92CADB48500833DB2 /* Constants */ = {
@@ -288,6 +333,7 @@
 			isa = PBXGroup;
 			children = (
 				CFCBC6F32CB173D700833DB2 /* SolidButton.swift */,
+				CFABDF532CC403E500724489 /* RadialButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -378,7 +424,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					CF3ED99A2CAD37C90087D136 = {
 						CreatedOnToolsVersion = 15.4;
@@ -425,9 +471,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF7A65992CB520160016C4E8 /* check.riv in Resources */,
+				CFABDF4C2CC3FF2C00724489 /* Inter-SemiBold.ttf in Resources */,
+				CFABDF4D2CC3FF2C00724489 /* Poppins-Bold.ttf in Resources */,
+				CFABDF4E2CC3FF2C00724489 /* Inter-Regular.ttf in Resources */,
 				CF7A659A2CB520160016C4E8 /* confetti.riv in Resources */,
 				CF3ED9A62CAD37CA0087D136 /* Preview Assets.xcassets in Resources */,
+				CFABDF472CC3D41200724489 /* shapes_2.riv in Resources */,
 				CF7A65982CB520160016C4E8 /* button.riv in Resources */,
+				CFABDF512CC4016B00724489 /* Poppins-Medium.ttf in Resources */,
+				CFABDF522CC4016B00724489 /* Poppins-SemiBold.ttf in Resources */,
 				CF7A659C2CB520160016C4E8 /* icons.riv in Resources */,
 				CF7A659E2CB520160016C4E8 /* shapes.riv in Resources */,
 				CF7A659B2CB520160016C4E8 /* house.riv in Resources */,
@@ -459,6 +511,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F60C0DA2CAFC2A1008D2AB3 /* AppDelegate.swift in Sources */,
+				CFABDF432CC3B69400724489 /* GradientIconTextField.swift in Sources */,
 				CF3ED9CE2CAD37EB0087D136 /* SpeechRecognizer.swift in Sources */,
 				CF38246E2CC2800000A3BE86 /* TabBar.swift in Sources */,
 				CFCBC6F12CB1677C00833DB2 /* UserProfileModel.swift in Sources */,
@@ -470,8 +523,11 @@
 				3F60C0D82CAFC1B8008D2AB3 /* AuthenticationView.swift in Sources */,
 				CFCBC6F72CB17D2300833DB2 /* SplashScreen.swift in Sources */,
 				CFCBC6F42CB173D700833DB2 /* SolidButton.swift in Sources */,
+				CFABDF452CC3B6F200724489 /* VisualEffectBlur.swift in Sources */,
 				CFCBC6F92CB1A53200833DB2 /* Extensions.swift in Sources */,
+				CF3824A92CC3B39400A3BE86 /* GradientTextField.swift in Sources */,
 				CF3ED9D02CAD38050087D136 /* MeetingView.swift in Sources */,
+				CFABDF542CC403E500724489 /* RadialButton.swift in Sources */,
 				CFCBC6EC2CB1616C00833DB2 /* MessageHelper.swift in Sources */,
 				CF3ED9A82CAD37CA0087D136 /* Persistence.swift in Sources */,
 				CF3ED9A12CAD37C90087D136 /* ContentView.swift in Sources */,
@@ -565,7 +621,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -622,7 +678,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -653,6 +709,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -688,6 +745,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -705,7 +763,6 @@
 		CF3ED9C82CAD37CA0087D136 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -724,7 +781,6 @@
 		CF3ED9C92CAD37CA0087D136 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -743,7 +799,6 @@
 		CF3ED9CB2CAD37CA0087D136 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -760,7 +815,6 @@
 		CF3ED9CC2CAD37CA0087D136 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;

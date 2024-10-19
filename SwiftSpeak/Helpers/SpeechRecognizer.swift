@@ -454,7 +454,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
   }
   
   /// Delete the recording
-  func deleteRecording(id: String) {
+  func deleteRecording(id: String, callback: @escaping () -> ()) {
     guard let userId = Auth.auth().currentUser?.uid else { return }
     
     // Delete from Firestore
@@ -480,6 +480,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
                 )
               } else {
                 self.loadRecordings()
+                callback()
               }
             }
           }

@@ -44,15 +44,23 @@ struct ContentView: View {
             .frame(maxHeight: .infinity, alignment: .bottom)
             .allowsHitTesting(false)
         )
-//        .ignoresSafeArea()
     }
   }
 }
 
 #Preview {
-  ContentView()
-    .environmentObject(AuthenticationManager())
-  //        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+  let auth = AuthenticationManager()
+  
+  if auth.isAuthenticated {
+    ContentView()
+      .environmentObject(auth)
+      .environmentObject(SpeechRecognizer())
+//      .environment(\.managedObjectContext, persistenceController.container.viewContext)
+  } else {
+    AuthenticationView()
+      .environmentObject(auth)
+      .environmentObject(SpeechRecognizer())
+  }
 }
 
 

@@ -34,36 +34,6 @@
             endingLineNumber = "413"
             landmarkName = "saveRecording(name:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "ACC71C60-93B1-4552-B4D3-0C5C81269DE7 - fc8efc77272e16bb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Swift.Optional&lt;Foundation.URL&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;FirebaseStorage.StorageMetadata&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SwiftSpeak.SpeechRecognizer.saveRecording(name: Swift.String) -&gt; ()"
-                  moduleName = "SwiftSpeak.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenphucloi/Desktop/Code/IOS/Full%20stack/SwiftSpeak/SwiftSpeak/Helpers/SpeechRecognizer.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "413"
-                  endingLineNumber = "413">
-               </Location>
-               <Location
-                  uuid = "ACC71C60-93B1-4552-B4D3-0C5C81269DE7 - 4a269867adcb2700"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (SwiftSpeak.RecordingMetadata, SwiftSpeak.RecordingMetadata) -&gt; Swift.Bool in closure #1 @Swift.MainActor () -&gt; () in closure #1 (Swift.Optional&lt;Foundation.URL&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;FirebaseStorage.StorageMetadata&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SwiftSpeak.SpeechRecognizer.saveRecording(name: Swift.String) -&gt; ()"
-                  moduleName = "SwiftSpeak.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/nguyenphucloi/Desktop/Code/IOS/Full%20stack/SwiftSpeak/SwiftSpeak/Helpers/SpeechRecognizer.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "413"
-                  endingLineNumber = "413">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
