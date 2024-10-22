@@ -22,7 +22,7 @@ enum SpeechSpeed: String, Codable {
   case Unclear = "Unclear"
 }
 
-struct RecordingMetadata: Codable {
+struct RecordingMetadata: Codable, Hashable {
   let id: String
   let name: String
   let timestamp: Date
@@ -66,6 +66,17 @@ class SpeechRecognizer: NSObject, ObservableObject {
   @Published var isPlaying: Bool = false
   @Published var recordings: [RecordingMetadata] = []
   
+  @Published var selectedRecord: RecordingMetadata? = RecordingMetadata(
+    id: "",
+    name: "",
+    timestamp: Date(),
+    duration: Date().timeIntervalSince1970,
+    wordsPerMinute: 0,
+    speechSpeed: .Normal,
+    transcript: "",
+    storageUrl: ""
+  )
+  
   private let storage = Storage.storage()
   private let db = Firestore.firestore()
   private var audioEngine: AVAudioEngine?
@@ -86,6 +97,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
   
   override init() {
     recognizer = SFSpeechRecognizer()
+    //    selectedRecord = nil
     super.init()
     
     self.loadRecordings()
@@ -371,31 +383,40 @@ class SpeechRecognizer: NSObject, ObservableObject {
   }
   
   /// Save the recording
-  func saveRecording(name: String) {
+  func saveRecording(name: String, completion: @escaping (Bool) -> Void) {
     guard let audioFileURL = audioFileURL,
-          let userId = Auth.auth().currentUser?.uid
-    else { return }
+          let userId = Auth.auth().currentUser?.uid else {
+      completion(false)
+      return
+    }
     
     let recordId = UUID().uuidString
-    let storageRef = storage.reference().child(
-      "recordings/\(userId)/\(recordId).m4a")
+    let storageRef = storage.reference().child("recordings/\(userId)/\(recordId).m4a")
+
     
     storageRef.putFile(from: audioFileURL, metadata: nil) {
-      metadata, error in
+      metadata,
+      error in
       if let error = error {
         print("Error uploading file: \(error.localizedDescription)")
+        completion(false)
         return
       }
       
-      storageRef.downloadURL { url, error in
+      storageRef.downloadURL {
+        url,
+        error in
         guard let downloadURL = url else {
-          print(
-            "Error getting download URL: \(error?.localizedDescription ?? "Unknown error")"
-          )
+          print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+          completion(false)
           return
         }
         
-        let metadata = RecordingMetadata(
+        print(
+          "Self audio duration \(String(describing: self.audioPlayer?.duration))"
+        )
+        
+        let newMetadata = RecordingMetadata(
           id: recordId,
           name: name,
           timestamp: Date(),
@@ -406,30 +427,45 @@ class SpeechRecognizer: NSObject, ObservableObject {
           storageUrl: downloadURL.absoluteString
         )
         
-        self.saveMetadataToFirestore(metadata: metadata)
-        
-        DispatchQueue.main.async {
-          print("Size of recordings before updated view model \(self.recordings.count)")
-          self.recordings.append(metadata)
-          self.recordings = self.recordings.sorted(by: {$0.timestamp > $1.timestamp})
-          print("Size of recordings after updated view model \(self.recordings.count)")
-          
+        // Save metadata to Firestore
+        self.saveMetadataToFirestore(metadata: newMetadata) { success in
+          if success {
+            DispatchQueue.main.async {
+              print("Successfully saved metadata. Now loading recordings.")
+              self.selectedRecord = newMetadata // Set the selected record for navigation
+            }
+            //                    self.recordings.append(newMetadata)
+            self.loadRecordings()
+            completion(true)  // Notify that save and load are complete
+          } else {
+            completion(false)
+          }
         }
-//        self.loadRecordings()
       }
     }
   }
   
+  
   /// Save the metadata with recording to Firebase
-  private func saveMetadataToFirestore(metadata: RecordingMetadata) {
-    guard let userId = Auth.auth().currentUser?.uid else { return }
+  private func saveMetadataToFirestore(metadata: RecordingMetadata, completion: @escaping (Bool) -> Void) {
+    guard let userId = Auth.auth().currentUser?.uid else {
+      completion(false)
+      return
+    }
     
     do {
       try db.collection("users").document(userId).collection("recordings")
-        .document(metadata.id).setData(from: metadata)
-
+        .document(metadata.id).setData(from: metadata) { error in
+          if let error = error {
+            print("Error saving metadata: \(error.localizedDescription)")
+            completion(false)
+          } else {
+            completion(true)
+          }
+        }
     } catch let error {
       print("Error saving metadata: \(error.localizedDescription)")
+      completion(false)
     }
   }
   

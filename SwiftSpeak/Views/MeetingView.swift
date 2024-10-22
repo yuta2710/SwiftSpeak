@@ -12,15 +12,27 @@ struct MeetingView: View {
   @ObservedObject var speechRecognizer: SpeechRecognizer
   @State private var showingSaveDialog = false
   @State private var recordingName = ""
+  @State private var isShowingDetailView = false
   
   var body: some View {
-    ZStack {
-      VStack(alignment: .trailing) {
-        Image("Background01")
-          .resizable()
-          .frame(width: 250, height: 600, alignment: .topTrailing)
-          .ignoresSafeArea()
-        
+    NavigationView {
+      ZStack {
+        VStack(alignment: .trailing) {
+          Image("Background01")
+            .resizable()
+            .frame(width: 250, height: 600, alignment: .topTrailing)
+            .ignoresSafeArea()
+          
+          RiveViewModel(fileName: "shapes").view()
+            .ignoresSafeArea()
+            .blur(radius: 50)
+            .background(
+              Image("Spline")
+                .resizable()
+                .blur(radius: 50)
+                .offset(x: 200, y: 100)
+            )
+        }
         RiveViewModel(fileName: "shapes").view()
           .ignoresSafeArea()
           .blur(radius: 50)
@@ -30,105 +42,118 @@ struct MeetingView: View {
               .blur(radius: 50)
               .offset(x: 200, y: 100)
           )
-      }
-      RiveViewModel(fileName: "shapes").view()
-        .ignoresSafeArea()
-        .blur(radius: 50)
-        .background(
-          Image("Spline")
-            .resizable()
-            .blur(radius: 50)
-            .offset(x: 200, y: 100)
-        )
-      
-      
-      VStack(spacing: 20) {
-        if !speechRecognizer.transcript.isEmpty {
-          TranscriptView(transcript: speechRecognizer.transcript)
-        }
         
         
-        if speechRecognizer.isProcessing {
-          ProgressView("Processing transcript...")
-            .progressViewStyle(CircularProgressViewStyle())
-        }
-        
-        if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
-          AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
-        }
-        
-        ControlButtonsView(
-          isRecording: speechRecognizer.isRecording,
-          canAnalyze: speechRecognizer.canAnalyze,
-          isPlaybackAvailable: speechRecognizer.isPlaybackAvailable,
-          isPlaying: speechRecognizer.isPlaying,
-          onRecordTap: {
-            if speechRecognizer.isRecording {
-              speechRecognizer.stopTranscribing()
-            } else {
-              speechRecognizer.transcribe()
-            }
-          },
-          onAnalyzeTap: {
-            speechRecognizer.analyzeSpeedAndWPM()
-          },
-          onPlaybackTap: {
-            if speechRecognizer.isPlaying {
-              speechRecognizer.stopPlayback()
-            } else {
-              speechRecognizer.playRecording()
-            }
+        VStack(spacing: 20) {
+          if !speechRecognizer.transcript.isEmpty {
+            TranscriptView(transcript: speechRecognizer.transcript)
           }
-        )
-        
-        if let errorMessage = speechRecognizer.errorMessage {
-          Text(errorMessage)
-            .foregroundColor(.red)
+          
+          
+          if speechRecognizer.isProcessing {
+            ProgressView("Processing transcript...")
+              .progressViewStyle(CircularProgressViewStyle())
+          }
+          
+          if !speechRecognizer.isRecording && !speechRecognizer.isProcessing {
+            AnalysisView(speed: speechRecognizer.speed, wordsPerMinute: speechRecognizer.wordsPerMinute)
+          }
+          
+          ControlButtonsView(
+            isRecording: speechRecognizer.isRecording,
+            canAnalyze: speechRecognizer.canAnalyze,
+            isPlaybackAvailable: speechRecognizer.isPlaybackAvailable,
+            isPlaying: speechRecognizer.isPlaying,
+            onRecordTap: {
+              if speechRecognizer.isRecording {
+                speechRecognizer.stopTranscribing()
+              } else {
+                speechRecognizer.transcribe()
+              }
+            },
+            onAnalyzeTap: {
+              speechRecognizer.analyzeSpeedAndWPM()
+            },
+            onPlaybackTap: {
+              if speechRecognizer.isPlaying {
+                speechRecognizer.stopPlayback()
+              } else {
+                speechRecognizer.playRecording()
+              }
+            }
+          )
+          
+          if let errorMessage = speechRecognizer.errorMessage {
+            Text(errorMessage)
+              .foregroundColor(.red)
+              .padding()
+          }
+          
+          if !speechRecognizer.isRecording && !speechRecognizer.isProcessing && speechRecognizer.isPlaybackAvailable {
+            Button("Save Recording") {
+              showingSaveDialog = true
+            }
             .padding()
+            .background(Color.green)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+          }
+        }
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .padding()
+        .navigationTitle("Record Area")
+        .navigationBarTitleDisplayMode(.large)
+        .alert("Save Recording", isPresented: $showingSaveDialog) {
+          TextField("Recording Name", text: $recordingName)
+        
+          Button("Save") {
+              speechRecognizer.saveRecording(name: recordingName) { success in
+                  if success {
+                      // If save and load are successful, trigger the navigation
+                      print("Is success \(success)")
+                    self.speechRecognizer.loadRecordings()
+                      self.isShowingDetailView = true
+                      recordingName = ""
+                  } else {
+                      // Handle error if needed (e.g., show an error message)
+                      print("Failed to save recording")
+                  }
+              }
+          }
+          Button("Cancel", role: .cancel) {}
+        } message: {
+          Text("Enter a name for your recording")
+        }
+        .padding()
+        //            .background(Color(.systemBackground))
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .padding()
+        .navigationTitle("Speech Analyzer")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert(isPresented: $speechRecognizer.showUnclearSpeechAlert) {
+          Alert(
+            title: Text("Unclear Speech"),
+            message: Text("Please speak more clearly and slowly."),
+            dismissButton: .default(Text("OK"))
+          )
         }
         
-        if !speechRecognizer.isRecording && !speechRecognizer.isProcessing && speechRecognizer.isPlaybackAvailable {
-          Button("Save Recording") {
-            showingSaveDialog = true
-          }
-          .padding()
-          .background(Color.green)
-          .foregroundColor(.white)
-          .cornerRadius(10)
+        NavigationLink(
+          destination: DetailedRecordingView(
+            recording: self.speechRecognizer.selectedRecord!,
+            speechRecognizer: speechRecognizer
+          ),
+          isActive: $isShowingDetailView
+        ) {
+          EmptyView()
         }
+        
       }
-      .padding()
-      .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-      .padding()
-      .navigationTitle("Record Area")
-      .navigationBarTitleDisplayMode(.large)
-      .alert("Save Recording", isPresented: $showingSaveDialog) {
-        TextField("Recording Name", text: $recordingName)
-        Button("Save") {
-          speechRecognizer.saveRecording(name: recordingName)
-          recordingName = ""
+      .onAppear {
+        DispatchQueue.main.async {
+          speechRecognizer.loadRecordings()
         }
-        Button("Cancel", role: .cancel) {}
-      } message: {
-        Text("Enter a name for your recording")
-      }
-      .padding()
-      //            .background(Color(.systemBackground))
-      .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-      .padding()
-      .navigationTitle("Speech Analyzer")
-      .navigationBarTitleDisplayMode(.inline)
-      .alert(isPresented: $speechRecognizer.showUnclearSpeechAlert) {
-        Alert(
-          title: Text("Unclear Speech"),
-          message: Text("Please speak more clearly and slowly."),
-          dismissButton: .default(Text("OK"))
-        )
-      }
-    }
-    .onAppear {
-      DispatchQueue.main.async {
-        speechRecognizer.loadRecordings()
       }
     }
   }
@@ -199,16 +224,16 @@ struct AnalysisView: View {
   
   var speedColor: Color {
     switch speed {
-      case .Slow:
-        return .blue
-      case .Normal:
-        return .green
-      case .Fast:
-        return .orange
-      case .VeryFast:
-        return .red
-      case .Unclear:
-        return .yellow
+    case .Slow:
+      return .blue
+    case .Normal:
+      return .green
+    case .Fast:
+      return .orange
+    case .VeryFast:
+      return .red
+    case .Unclear:
+      return .yellow
     }
   }
 }

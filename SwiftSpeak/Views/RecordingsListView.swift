@@ -20,13 +20,13 @@ struct RecordingsListView: View {
     NavigationView {
       ZStack {
         if systemScheme == .dark {
-          LinearGradient(gradient: Gradient(stops: [
-            .init(color: Color(hex: "#BA1FEE"), location: -0.5),
-            .init(color: Color(hex: "#000000"), location: 0.5),
-            .init(color: Color(hex: "#031341"), location: 1),
-            .init(color: Color(hex: "#000000"), location: 0.5)
-          ]), startPoint: .topLeading, endPoint: .bottomTrailing)
-          .ignoresSafeArea()
+//          LinearGradient(gradient: Gradient(stops: [
+//            .init(color: Color(hex: "#BA1FEE"), location: -0.5),
+//            .init(color: Color(hex: "#000000"), location: 0.5),
+//            .init(color: Color(hex: "#031341"), location: 1),
+//            .init(color: Color(hex: "#000000"), location: 0.5)
+//          ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+//          .ignoresSafeArea()
         }else {
           Color.white
             .ignoresSafeArea()
@@ -39,19 +39,24 @@ struct RecordingsListView: View {
                 VStack(alignment: .leading) {
                   Text(recording.name)
                     .font(.headline)
+                    .foregroundColor(systemScheme == .dark ? .white : .black)
                   Text(recording.timestamp, style: .date)
                     .font(.subheadline)
+                    .foregroundColor(systemScheme == .dark ? .white : .black)
                   Text("Duration: \(formattedDuration(recording.duration))")
                     .font(.subheadline)
+                    .foregroundColor(systemScheme == .dark ? .white : .black)
                 }
-                .background(.red)
+//                .background(.red)
               }
             }
           }
         }
       }
       .navigationTitle("Recordings")
-      
+      .onAppear() {
+        speechRecognizer.loadRecordings()
+      }
     }
   }
   
