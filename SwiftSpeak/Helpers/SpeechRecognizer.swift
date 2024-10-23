@@ -502,54 +502,56 @@ class SpeechRecognizer: NSObject, ObservableObject {
   }
   
   /// Save the recording
-  func saveRecording(name: String) {
-    guard let audioFileURL = audioFileURL,
-          let userId = Auth.auth().currentUser?.uid
-    else { return }
-    
-    let recordId = UUID().uuidString
-    let storageRef = storage.reference().child(
-      "recordings/\(userId)/\(recordId).m4a")
-    
-    storageRef.putFile(from: audioFileURL, metadata: nil) {
-      metadata, error in
-      if let error = error {
-        print("Error uploading file: \(error.localizedDescription)")
-        return
-      }
-      
-      storageRef.downloadURL { url, error in
-        guard let downloadURL = url else {
-          print(
-            "Error getting download URL: \(error?.localizedDescription ?? "Unknown error")"
-          )
-          return
-        }
-        
-        let metadata = RecordingMetadata(
-          id: recordId,
-          name: name,
-          timestamp: Date(),
-          duration: self.audioPlayer?.duration ?? 0,
-          wordsPerMinute: self.wordsPerMinute,
-          speechSpeed: self.speed,
-          transcript: self.transcript,
-          storageUrl: downloadURL.absoluteString
-        )
-        
-        self.saveMetadataToFirestore(metadata: metadata)
-        
-        DispatchQueue.main.async {
-          print("Size of recordings before updated view model \(self.recordings.count)")
-          self.recordings.append(metadata)
-          self.recordings = self.recordings.sorted(by: {$0.timestamp > $1.timestamp})
-          print("Size of recordings after updated view model \(self.recordings.count)")
-          
-        }
-//        self.loadRecordings()
-      }
-    }
-  }
+	func saveRecording(name: String) {
+		guard let audioFileURL = audioFileURL,
+			  let userId = Auth.auth().currentUser?.uid
+		else { return }
+
+		/// Ensure the audio player is initialized before accessing duration
+		if let audioPlayer = try? AVAudioPlayer(contentsOf: audioFileURL) {
+			audioPlayer.prepareToPlay()
+
+			let recordId = UUID().uuidString
+			let storageRef = storage.reference().child("recordings/\(userId)/\(recordId).m4a")
+			
+			storageRef.putFile(from: audioFileURL, metadata: nil) { metadata, error in
+				if let error = error {
+					print("Error uploading file: \(error.localizedDescription)")
+					return
+				}
+				
+				storageRef.downloadURL { url, error in
+					guard let downloadURL = url else {
+						print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
+						return
+					}
+
+					// Access the duration after audioPlayer is ready
+					let metadata = RecordingMetadata(
+						id: recordId,
+						name: name,
+						timestamp: Date(),
+						duration: audioPlayer.duration,
+						wordsPerMinute: self.wordsPerMinute,
+						speechSpeed: self.speed,
+						transcript: self.transcript,
+						storageUrl: downloadURL.absoluteString
+					)
+
+					self.saveMetadataToFirestore(metadata: metadata)
+
+					DispatchQueue.main.async {
+						print("Size of recordings before updated view model \(self.recordings.count)")
+						self.recordings.append(metadata)
+						self.recordings = self.recordings.sorted(by: {$0.timestamp > $1.timestamp})
+						print("Size of recordings after updated view model \(self.recordings.count)")
+					}
+				}
+			}
+		} else {
+			print("Error initializing audio player")
+		}
+	}
   
   /// Save the metadata with recording to Firebase
   private func saveMetadataToFirestore(metadata: RecordingMetadata) {
