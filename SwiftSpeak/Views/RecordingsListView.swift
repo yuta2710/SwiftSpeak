@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVFoundation
+import Translation
 
 struct RecordingsListView: View {
   @EnvironmentObject var speechRecognizer: SpeechRecognizer
@@ -60,6 +61,7 @@ struct DetailedRecordingView: View {
 	@State private var exportAlertMessage = ""
 	@State private var isLoading = false
 	@State private var exportedFileURL: URL?
+	@State private var showTranslation = false  // Added for translation feature
 
 	var body: some View {
 		ScrollView {
@@ -78,6 +80,19 @@ struct DetailedRecordingView: View {
 					.padding()
 					.background(Color.gray.opacity(0.1))
 					.cornerRadius(8)
+				
+				Button(action: { showTranslation.toggle() }) {
+					HStack {
+						Image(systemName: "translate")
+						Text("Translate")
+					}
+					.padding(.horizontal)
+					.padding(.vertical, 8)
+					.background(Color.blue)
+					.foregroundColor(.white)
+					.cornerRadius(8)
+				}
+				.padding(.horizontal)
 				
 				HStack {
 					Button(action: togglePlayback) {
@@ -115,6 +130,7 @@ struct DetailedRecordingView: View {
 			.padding()
 		}
 		.navigationTitle("Recording Details")
+		.translationPresentation(isPresented: $showTranslation, text: recording.transcript)
 		.alert("Delete Recording", isPresented: $showingDeleteAlert) {
 			Button("Delete", role: .destructive) {
 				speechRecognizer.deleteRecording(id: recording.id)
