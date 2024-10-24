@@ -47,7 +47,6 @@ struct RecordingsListView: View {
                     .font(.subheadline)
                     .foregroundColor(systemScheme == .dark ? .white : .black)
                 }
-//                .background(.red)
               }
             }
           }

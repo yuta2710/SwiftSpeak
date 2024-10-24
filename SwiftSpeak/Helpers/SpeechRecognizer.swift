@@ -337,8 +337,15 @@ class SpeechRecognizer: NSObject, ObservableObject {
     request?.endAudio()
     
     do {
+      print(
+        "self.audioPlayer?.duration start in stop transcribing = \(String(describing: self.audioPlayer?.duration))"
+      )
       try audioSession.setActive(
         false, options: .notifyOthersOnDeactivation)
+      
+      print(
+        "self.audioPlayer?.duration finish in stop transcribing = \(String(describing: self.audioPlayer?.duration))"
+      )
     } catch {
       print("Failed to deactivate audio session: \(error)")
     }
@@ -392,7 +399,7 @@ class SpeechRecognizer: NSObject, ObservableObject {
     
     let recordId = UUID().uuidString
     let storageRef = storage.reference().child("recordings/\(userId)/\(recordId).m4a")
-
+    
     
     storageRef.putFile(from: audioFileURL, metadata: nil) {
       metadata,
@@ -415,12 +422,13 @@ class SpeechRecognizer: NSObject, ObservableObject {
         print(
           "Self audio duration \(String(describing: self.audioPlayer?.duration))"
         )
+        let duration = self.audioPlayer?.duration
         
         let newMetadata = RecordingMetadata(
           id: recordId,
           name: name,
           timestamp: Date(),
-          duration: self.audioPlayer?.duration ?? 0,
+          duration: duration ?? 0,
           wordsPerMinute: self.wordsPerMinute,
           speechSpeed: self.speed,
           transcript: self.transcript,
@@ -532,6 +540,10 @@ class SpeechRecognizer: NSObject, ObservableObject {
       self.canAnalyze = true
       self.isFinalizing = false
       self.isPlaybackAvailable = true
+      
+      print(
+        "self.audioPlayer?.duration in finish transcribing function = \(String(describing: self.audioPlayer?.duration))"
+      )
     }
   }
   
